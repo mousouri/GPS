@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { MapPin, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import BrandMark from '../components/BrandMark';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -48,12 +49,7 @@ export default function LoginPage() {
             transition={{ duration: 0.8 }}
           >
             <Link to="/" className="flex items-center gap-2 mb-12">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-                <MapPin className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold">
-                Track<span className="gradient-text">Pro</span>
-              </span>
+              <BrandMark className="h-10 w-auto rounded-xl" />
             </Link>
             <h1 className="text-4xl font-bold mb-4">
               Welcome back to <br />
@@ -94,12 +90,7 @@ export default function LoginPage() {
         >
           <div className="lg:hidden flex items-center gap-2 mb-8">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-                <MapPin className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold">
-                Track<span className="gradient-text">Pro</span>
-              </span>
+              <BrandMark className="h-10 w-auto rounded-xl" />
             </Link>
           </div>
 

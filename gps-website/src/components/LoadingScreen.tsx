@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin } from 'lucide-react';
+import BrandMark from './BrandMark';
 
 interface LoadingScreenProps {
   onComplete: () => void;
@@ -59,9 +59,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
               className="absolute inset-0 w-20 h-20 rounded-2xl border-2 border-primary-500/20"
               style={{ margin: '-4px' }}
             />
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-2xl shadow-primary-500/30">
-              <MapPin className="w-10 h-10 text-white" />
-            </div>
+            <BrandMark className="h-20 w-auto rounded-2xl shadow-2xl shadow-primary-500/20" />
           </motion.div>
 
           {/* Brand Name */}
@@ -71,9 +69,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
             transition={{ delay: 0.3 }}
             className="mb-8"
           >
-            <span className="text-3xl font-bold">
-              Track<span className="gradient-text">Pro</span>
-            </span>
+            <BrandMark className="h-12 w-auto mx-auto rounded-xl" />
             <p className="text-gray-500 text-sm text-center mt-2">GPS Tracking Solutions</p>
           </motion.div>
 

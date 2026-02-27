@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { changePasswordRequest, getProfileData, updateProfileRequest } from '../lib/api';
+import BrandMark from '../components/BrandMark';
 import {
-  MapPin, ArrowLeft, User, Mail, Building2, Camera,
+  ArrowLeft, User, Mail, Building2, Camera,
   Bell, Shield, Key, Save, Check,
 } from 'lucide-react';
 
@@ -128,10 +129,7 @@ export default function ProfilePage() {
         <Link to="/dashboard" className="p-2 rounded-xl hover:bg-white/5 transition-colors">
           <ArrowLeft className="w-5 h-5 text-gray-400" />
         </Link>
-        <div className="flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-primary-400" />
-          <span className="font-semibold">Track<span className="gradient-text">Pro</span></span>
-        </div>
+        <BrandMark className="h-8 w-auto rounded-lg" />
         <span className="text-gray-500 mx-2">/</span>
         <span className="text-gray-300">Settings</span>
       </header>

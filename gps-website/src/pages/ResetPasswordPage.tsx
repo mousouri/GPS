@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle, KeyRound, Lock, MapPin } from 'lucide-react';
+import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle, KeyRound, Lock } from 'lucide-react';
 import { resetPasswordRequest } from '../lib/api';
+import BrandMark from '../components/BrandMark';
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
@@ -60,11 +61,8 @@ export default function ResetPasswordPage() {
         transition={{ duration: 0.6 }}
         className="relative w-full max-w-md"
       >
-        <Link to="/" className="inline-flex items-center gap-2 mb-10">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-            <MapPin className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-bold">Track<span className="gradient-text">Pro</span></span>
+        <Link to="/" className="inline-flex items-center mb-10">
+          <BrandMark className="h-10 w-auto rounded-xl" />
         </Link>
 
         {!isComplete ? (

@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getAdminDashboardData, type AdminRecentUser } from '../lib/api';
+import BrandMark from '../components/BrandMark';
 import {
-  MapPin, LogOut, Bell, Search, ChevronDown, ShieldCheck,
+  LogOut, Bell, Search, ChevronDown, ShieldCheck,
   LayoutDashboard, Users, CreditCard, BarChart3, Settings, Globe,
   DollarSign, UserPlus, Server, Database, Cpu, HardDrive,
   ArrowUpRight,
@@ -91,12 +92,7 @@ export default function AdminDashboardPage() {
       >
         <div className="p-6 border-b border-white/5">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-              <MapPin className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold">
-              Track<span className="gradient-text">Pro</span>
-            </span>
+            <BrandMark className="h-9 w-auto rounded-xl" />
           </Link>
           <div className="mt-3 flex items-center gap-2">
             <ShieldCheck className="w-3.5 h-3.5 text-red-400" />

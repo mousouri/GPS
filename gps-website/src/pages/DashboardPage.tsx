@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { buildEmbeddedMapUrl, getDashboardData, type AlertItem, type Vehicle } from '../lib/api';
+import BrandMark from '../components/BrandMark';
 import {
-  MapPin, LogOut, Bell, Search, ChevronDown,
+  LogOut, Bell, Search, ChevronDown,
   LayoutDashboard, Truck, Map, BarChart3, Settings,
   AlertTriangle, Clock, Navigation, Shield, Activity, ExternalLink,
 } from 'lucide-react';
@@ -95,12 +96,7 @@ export default function DashboardPage() {
       >
         <div className="p-6 border-b border-white/5">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-              <MapPin className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold">
-              Track<span className="gradient-text">Pro</span>
-            </span>
+            <BrandMark className="h-9 w-auto rounded-xl" />
           </Link>
         </div>
 

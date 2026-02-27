@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MapPin, Menu, X, LogIn, LayoutDashboard, LogOut } from 'lucide-react';
+import { Menu, X, LogIn, LayoutDashboard, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import BrandMark from './BrandMark';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -55,14 +56,9 @@ export default function Navbar() {
           <Link to="/" className="flex items-center gap-2 group">
             <motion.div whileHover={{ scale: 1.02 }} className="flex items-center gap-2">
               <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-white" />
-                </div>
-                <div className="absolute inset-0 w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
+                <BrandMark className="h-10 w-auto rounded-xl relative z-10" />
+                <div className="absolute inset-0 blur-lg opacity-35 group-hover:opacity-55 transition-opacity bg-primary-500/20 rounded-2xl" />
               </div>
-              <span className="text-xl font-bold">
-                Track<span className="gradient-text">Pro</span>
-              </span>
             </motion.div>
           </Link>
 

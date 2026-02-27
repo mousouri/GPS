@@ -2,6 +2,7 @@ import { motion, type Variants, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { MapPin, Navigation, Shield, ArrowRight, Satellite, Radio, Truck, BarChart3, Smartphone, Play, Volume2, VolumeX } from 'lucide-react';
 import { useRef, useState } from 'react';
+import BrandMark from '../components/BrandMark';
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 40 },
@@ -77,17 +78,36 @@ export default function HomePage() {
                 initial="hidden"
                 animate="visible"
                 custom={0}
+                className="inline-flex items-center gap-4 rounded-3xl border border-white/10 bg-dark-950/55 px-4 py-3 shadow-2xl shadow-primary-950/20 backdrop-blur-xl mb-6"
+              >
+                <BrandMark className="h-10 sm:h-12 w-auto" />
+                <div className="hidden sm:block h-10 w-px bg-white/10" />
+                <div className="hidden sm:block">
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-primary-300">
+                    GPS Intelligence
+                  </p>
+                  <p className="text-sm text-gray-300">
+                    Built for fleets, assets, and field teams
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                custom={1}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6"
               >
                 <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
-                <span className="text-sm text-gray-300">Real-time GPS Tracking Technology</span>
+                <span className="text-sm text-gray-300">CRESTECH Real-time GPS Intelligence</span>
               </motion.div>
 
               <motion.h1
                 variants={fadeUp}
                 initial="hidden"
                 animate="visible"
-                custom={1}
+                custom={2}
                 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6"
               >
                 <span className="text-white">Track </span>
@@ -100,7 +120,7 @@ export default function HomePage() {
                 variants={fadeUp}
                 initial="hidden"
                 animate="visible"
-                custom={2}
+                custom={3}
                 className="text-lg text-gray-400 max-w-lg mb-8"
               >
                 Advanced GPS tracking solutions for vehicles, assets, and personnel. 
@@ -111,7 +131,7 @@ export default function HomePage() {
                 variants={fadeUp}
                 initial="hidden"
                 animate="visible"
-                custom={3}
+                custom={4}
                 className="flex flex-wrap gap-4"
               >
                 <Link to="/contact">

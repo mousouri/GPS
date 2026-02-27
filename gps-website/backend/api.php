@@ -242,7 +242,7 @@ function gps_handle_forgot_password(PDO $pdo): void
 
     $resetLink = rtrim(gps_env('GPS_APP_URL', 'http://localhost:5173'), '/') . '/reset-password?token=' . $token;
     $message = sprintf("Use this reset link: %s", $resetLink);
-    @mail($email, 'TrackPro password reset', $message);
+    @mail($email, 'CRESTECH password reset', $message);
 
     gps_record_audit($pdo, $user, 'Password Reset Requested', $email, 'security', 'medium', 'Password reset token issued');
 
