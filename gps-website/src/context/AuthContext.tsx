@@ -1,96 +1,106 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import {
+  clearStoredToken,
+  getCurrentUser,
+  getStoredToken,
+  loginRequest,
+  logoutRequest,
+  registerRequest,
+  setStoredToken,
+  type ApiUser,
+} from '../lib/api';
 
-export interface User {
-  id: string;
+export type User = ApiUser;
+
+interface RegisterInput {
   name: string;
   email: string;
-  role: 'user' | 'admin';
-  avatar?: string;
-  company?: string; // CRESTECH
-  plan?: string;
-  joinDate?: string;
+  password: string;
+  company: string;
+  plan: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  adminLogin: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<User>;
+  adminLogin: (email: string, password: string) => Promise<User>;
+  register: (input: RegisterInput) => Promise<User>;
+  logout: () => Promise<void>;
+  updateUser: (nextUser: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// Demo users for simulation
-const DEMO_USERS: Record<string, { password: string; user: User }> = {
-  'user@crestech.co.tz': {
-    password: 'user123',
-    user: {
-      id: 'u1',
-      name: 'John Anderson',
-      email: 'user@crestech.co.tz',
-      role: 'user',
-      avatar: '/images/person-man-2.jpg',
-      company: 'CRESTECH',
-      plan: 'Professional',
-      joinDate: '2025-06-15',
-    },
-  },
-  'admin@crestech.co.tz': {
-    password: 'admin123',
-    user: {
-      id: 'a1',
-      name: 'Sarah Mitchell',
-      email: 'admin@crestech.co.tz',
-      role: 'admin',
-      avatar: '/images/person-woman-4.jpg',
-      company: 'CRESTECH',
-      plan: 'Enterprise',
-      joinDate: '2024-01-10',
-    },
-  },
-};
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem('crestech_user');
-    if (saved) {
+    let isMounted = true;
+
+    async function restoreSession() {
+      if (!getStoredToken()) {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+        return;
+      }
+
       try {
-        setUser(JSON.parse(saved));
+        const restoredUser = await getCurrentUser();
+        if (isMounted) {
+          setUser(restoredUser);
+        }
       } catch {
-        localStorage.removeItem('crestech_user');
+        clearStoredToken();
+        if (isMounted) {
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
+
+    restoreSession();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const login = async (email: string, _password: string): Promise<boolean> => {
-    await new Promise((r) => setTimeout(r, 800)); // simulate network
-    const entry = DEMO_USERS[email.toLowerCase()];
-    if (entry && entry.user.role === 'user') {
-      setUser(entry.user);
-      localStorage.setItem('crestech_user', JSON.stringify(entry.user));
-      return true;
-    }
-    return false;
+  const login = async (email: string, password: string) => {
+    const session = await loginRequest(email, password, 'user');
+    setStoredToken(session.token);
+    setUser(session.user);
+    return session.user;
   };
 
-  const adminLogin = async (email: string, _password: string): Promise<boolean> => {
-    await new Promise((r) => setTimeout(r, 800));
-    const entry = DEMO_USERS[email.toLowerCase()];
-    if (entry && entry.user.role === 'admin') {
-      setUser(entry.user);
-      localStorage.setItem('crestech_user', JSON.stringify(entry.user));
-      return true;
-    }
-    return false;
+  const adminLogin = async (email: string, password: string) => {
+    const session = await loginRequest(email, password, 'admin');
+    setStoredToken(session.token);
+    setUser(session.user);
+    return session.user;
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('crestech_user');
+  const register = async (input: RegisterInput) => {
+    const session = await registerRequest(input);
+    setStoredToken(session.token);
+    setUser(session.user);
+    return session.user;
+  };
+
+  const logout = async () => {
+    try {
+      await logoutRequest();
+    } finally {
+      clearStoredToken();
+      setUser(null);
+    }
   };
 
   return (
@@ -99,9 +109,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isAuthenticated: !!user,
         isAdmin: user?.role === 'admin',
+        isLoading,
         login,
         adminLogin,
+        register,
         logout,
+        updateUser: setUser,
       }}
     >
       {children}
@@ -110,7 +123,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+
+  return context;
 }

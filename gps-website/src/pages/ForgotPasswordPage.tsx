@@ -1,25 +1,36 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { MapPin, Mail, ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { MapPin, Mail, ArrowLeft, ArrowRight, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react';
+import { requestPasswordReset } from '../lib/api';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
   const [error, setError] = useState('');
+  const [resetLink, setResetLink] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError('');
+
     if (!email) {
       setError('Please enter your email address');
       return;
     }
+
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setIsLoading(false);
-    setIsSent(true);
+
+    try {
+      const response = await requestPasswordReset(email);
+      setResetLink(response.resetLink ?? null);
+      setIsSent(true);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Unable to send reset instructions.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,7 +56,7 @@ export default function ForgotPasswordPage() {
         {!isSent ? (
           <>
             <h2 className="text-3xl font-bold mb-2">Forgot Password?</h2>
-            <p className="text-gray-400 mb-8">No worries, we'll send you a reset link to your email address.</p>
+            <p className="text-gray-400 mb-8">We&apos;ll generate a secure reset link for your account.</p>
 
             {error && (
               <motion.div
@@ -66,7 +77,7 @@ export default function ForgotPasswordPage() {
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(event) => setEmail(event.target.value)}
                     placeholder="Enter your email"
                     required
                     className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
@@ -95,14 +106,17 @@ export default function ForgotPasswordPage() {
               <CheckCircle className="w-8 h-8 text-accent-400" />
             </div>
             <h2 className="text-3xl font-bold mb-3">Check Your Email</h2>
-            <p className="text-gray-400 mb-2">We've sent a password reset link to:</p>
+            <p className="text-gray-400 mb-2">A reset request has been generated for:</p>
             <p className="text-white font-medium mb-8">{email}</p>
-            <p className="text-sm text-gray-500 mb-8">
-              Didn't receive the email?{' '}
-              <button onClick={() => setIsSent(false)} className="text-primary-400 hover:text-primary-300 font-medium transition-colors">
-                Click to resend
-              </button>
-            </p>
+            {resetLink && (
+              <a
+                href={resetLink}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm hover:bg-primary-500/20 transition-colors"
+              >
+                Open Reset Link
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            )}
           </motion.div>
         )}
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { MapPin, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, User, Building2, Check } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -22,16 +22,20 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const { login } = useAuth();
+  const { register, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  if (!isAuthLoading && isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError('');
 
     if (step === 1) {
       if (!name || !email || !company) {
-        setError('Please fill in all fields');
+        setError('Please fill in all fields.');
         return;
       }
       setStep(2);
@@ -39,48 +43,38 @@ export default function RegisterPage() {
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError('Password must be at least 6 characters.');
       return;
     }
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('Passwords do not match.');
       return;
     }
     if (!agreeTerms) {
-      setError('Please agree to the terms and conditions');
+      setError('Please agree to the terms and conditions.');
       return;
     }
 
     setIsLoading(true);
+
     try {
-      const res = await fetch('http://localhost/gps-website/backend/register.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
+      await register({
+        name,
+        email,
+        password,
+        company,
+        plan: selectedPlan,
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || 'Registration failed');
-        setIsLoading(false);
-        return;
-      }
-      // Auto-login after registration
-      const loginSuccess = await login(email, password);
-      setIsLoading(false);
-      if (loginSuccess) {
-        navigate('/dashboard');
-      } else {
-        setError('Registration succeeded but login failed.');
-      }
-    } catch (err) {
-      setError('Network error. Please try again.');
+      navigate('/dashboard');
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Unable to create your account.');
+    } finally {
       setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Side - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <img
           src="/images/skyscraper.jpg"
@@ -107,16 +101,20 @@ export default function RegisterPage() {
               <span className="gradient-text">in minutes</span>
             </h1>
             <p className="text-gray-400 text-lg max-w-md mb-12">
-              Join 10,000+ companies using CRESTECH to monitor their fleet and assets in real time.
+              Launch with real accounts, real devices, and a backend-backed fleet workspace from day one.
             </p>
 
             <div className="space-y-5">
-              {['No credit card required for trial', '14-day free trial on all plans', '24/7 dedicated support'].map((item, i) => (
+              {[
+                'Immediate access to your private fleet dashboard',
+                'Seeded devices, reports, and billing to get started faster',
+                'Password reset and profile management included',
+              ].map((item, index) => (
                 <motion.div
                   key={item}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 + i * 0.15 }}
+                  transition={{ delay: 0.3 + index * 0.15 }}
                   className="flex items-center gap-3"
                 >
                   <div className="w-6 h-6 rounded-full bg-accent-500/20 flex items-center justify-center">
@@ -130,7 +128,6 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -147,19 +144,18 @@ export default function RegisterPage() {
             </Link>
           </div>
 
-          {/* Steps indicator */}
           <div className="flex items-center gap-3 mb-8">
-            {[1, 2].map((s) => (
-              <div key={s} className="flex items-center gap-2">
+            {[1, 2].map((currentStep) => (
+              <div key={currentStep} className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                  step >= s ? 'bg-primary-500 text-dark-950' : 'bg-white/5 text-gray-500'
+                  step >= currentStep ? 'bg-primary-500 text-dark-950' : 'bg-white/5 text-gray-500'
                 }`}>
-                  {step > s ? <Check className="w-4 h-4" /> : s}
+                  {step > currentStep ? <Check className="w-4 h-4" /> : currentStep}
                 </div>
-                <span className={`text-sm ${step >= s ? 'text-white' : 'text-gray-500'}`}>
-                  {s === 1 ? 'Account' : 'Security & Plan'}
+                <span className={`text-sm ${step >= currentStep ? 'text-white' : 'text-gray-500'}`}>
+                  {currentStep === 1 ? 'Account' : 'Security & Plan'}
                 </span>
-                {s < 2 && <div className={`w-12 h-0.5 mx-2 ${step > 1 ? 'bg-primary-500' : 'bg-white/10'}`} />}
+                {currentStep < 2 && <div className={`w-12 h-0.5 mx-2 ${step > 1 ? 'bg-primary-500' : 'bg-white/10'}`} />}
               </div>
             ))}
           </div>
@@ -185,24 +181,42 @@ export default function RegisterPage() {
                   <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
                   <div className="relative">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Anderson" required
-                      className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all" />
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                      placeholder="John Anderson"
+                      required
+                      className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
+                    />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Work Email</label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@company.com" required
-                      className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      placeholder="john@company.com"
+                      required
+                      className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
+                    />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Company Name</label>
                   <div className="relative">
                     <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                    <input type="text" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Anderson Logistics" required
-                      className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all" />
+                    <input
+                      type="text"
+                      value={company}
+                      onChange={(event) => setCompany(event.target.value)}
+                      placeholder="Anderson Logistics"
+                      required
+                      className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
+                    />
                   </div>
                 </div>
               </motion.div>
@@ -212,9 +226,19 @@ export default function RegisterPage() {
                   <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                    <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 6 characters" required
-                      className="w-full pl-12 pr-12 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all" />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      placeholder="Min. 6 characters"
+                      required
+                      className="w-full pl-12 pr-12 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((current) => !current)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                    >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
@@ -223,8 +247,14 @@ export default function RegisterPage() {
                   <label className="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm your password" required
-                      className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all" />
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(event) => setConfirmPassword(event.target.value)}
+                      placeholder="Confirm your password"
+                      required
+                      className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
+                    />
                   </div>
                 </div>
 
@@ -232,10 +262,14 @@ export default function RegisterPage() {
                   <label className="block text-sm font-medium text-gray-300 mb-3">Select Plan</label>
                   <div className="space-y-2">
                     {plans.map((plan) => (
-                      <button key={plan.id} type="button" onClick={() => setSelectedPlan(plan.id)}
+                      <button
+                        key={plan.id}
+                        type="button"
+                        onClick={() => setSelectedPlan(plan.id)}
                         className={`w-full flex items-center justify-between p-4 rounded-xl transition-all ${
                           selectedPlan === plan.id ? 'glass-strong border-primary-500/50 ring-1 ring-primary-500/30' : 'glass hover:bg-white/[0.07]'
-                        }`}>
+                        }`}
+                      >
                         <div className="flex items-center gap-3">
                           <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
                             selectedPlan === plan.id ? 'border-primary-500 bg-primary-500' : 'border-gray-600'
@@ -243,7 +277,9 @@ export default function RegisterPage() {
                             {selectedPlan === plan.id && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                           </div>
                           <div className="text-left">
-                            <p className="text-sm font-medium text-white">{plan.name} {plan.popular && <span className="text-xs text-primary-400 ml-1">Popular</span>}</p>
+                            <p className="text-sm font-medium text-white">
+                              {plan.name} {plan.popular && <span className="text-xs text-primary-400 ml-1">Popular</span>}
+                            </p>
                             <p className="text-xs text-gray-500">{plan.desc}</p>
                           </div>
                         </div>
@@ -254,8 +290,12 @@ export default function RegisterPage() {
                 </div>
 
                 <label className="flex items-start gap-3 cursor-pointer">
-                  <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)}
-                    className="w-4 h-4 mt-0.5 rounded border-gray-600 bg-dark-800 text-primary-500 focus:ring-primary-500/50" />
+                  <input
+                    type="checkbox"
+                    checked={agreeTerms}
+                    onChange={(event) => setAgreeTerms(event.target.checked)}
+                    className="w-4 h-4 mt-0.5 rounded border-gray-600 bg-dark-800 text-primary-500 focus:ring-primary-500/50"
+                  />
                   <span className="text-sm text-gray-400">
                     I agree to the <a href="#" className="text-primary-400 hover:underline">Terms of Service</a> and <a href="#" className="text-primary-400 hover:underline">Privacy Policy</a>
                   </span>
@@ -265,13 +305,23 @@ export default function RegisterPage() {
 
             <div className="flex gap-3">
               {step === 2 && (
-                <motion.button type="button" onClick={() => setStep(1)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                  className="px-6 py-3.5 glass text-white font-medium rounded-xl hover:bg-white/10 transition-all">
+                <motion.button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-6 py-3.5 glass text-white font-medium rounded-xl hover:bg-white/10 transition-all"
+                >
                   Back
                 </motion.button>
               )}
-              <motion.button type="submit" disabled={isLoading} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                className="flex-1 py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              <motion.button
+                type="submit"
+                disabled={isLoading}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1 py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-dark-950/30 border-t-dark-950 rounded-full animate-spin" />
                 ) : (
@@ -284,7 +334,9 @@ export default function RegisterPage() {
           <div className="mt-8 text-center">
             <p className="text-gray-500 text-sm">
               Already have an account?{' '}
-              <Link to="/login" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">Sign In</Link>
+              <Link to="/login" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">
+                Sign In
+              </Link>
             </p>
           </div>
         </motion.div>

@@ -1,11 +1,22 @@
 <?php
-// create_db.php
-$host = 'localhost';
-$rootUser = 'root';
-$rootPass = '';
-$db = 'crestech_db';
-$appUser = 'crestech_user';
-$appPass = 'Crestech@12345';
+declare(strict_types=1);
+
+function gps_setup_env(string $key, string $default): string
+{
+    $value = getenv($key);
+    if ($value === false || $value === '') {
+        return $default;
+    }
+
+    return $value;
+}
+
+$host = gps_setup_env('GPS_DB_HOST', '127.0.0.1');
+$rootUser = gps_setup_env('GPS_SETUP_ROOT_USER', 'root');
+$rootPass = gps_setup_env('GPS_SETUP_ROOT_PASS', '');
+$db = gps_setup_env('GPS_DB_NAME', 'crestech_db');
+$appUser = gps_setup_env('GPS_DB_USER', 'crestech_user');
+$appPass = gps_setup_env('GPS_DB_PASS', 'Crestech@12345');
 
 $conn = new mysqli($host, $rootUser, $rootPass);
 if ($conn->connect_error) {

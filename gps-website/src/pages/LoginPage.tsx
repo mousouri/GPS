@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { MapPin, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,47 +10,30 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
 
-  if (isAuthenticated) {
-    navigate('/dashboard');
-    return null;
+  if (!isAuthLoading && isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError('');
     setIsLoading(true);
+
     try {
-      const res = await fetch('http://localhost/gps-website/backend/login.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || 'Login failed');
-        setIsLoading(false);
-        return;
-      }
-      // Optionally, you can store user info in context/localStorage here
-      const success = await login(email, password); // still call context login for app state
-      setIsLoading(false);
-      if (success) {
-        navigate('/dashboard');
-      } else {
-        setError('Login succeeded on backend but failed in app.');
-      }
-    } catch (err) {
-      setError('Network error. Please try again.');
+      await login(email, password);
+      navigate('/dashboard');
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Unable to sign in.');
+    } finally {
       setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Side - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <img
           src="/images/dashboard-analytics.jpg"
@@ -85,12 +68,12 @@ export default function LoginPage() {
                 'Real-time vehicle location tracking',
                 'Route history & analytics',
                 'Geofence alerts & notifications',
-              ].map((feature, i) => (
+              ].map((feature, index) => (
                 <motion.div
                   key={feature}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 + i * 0.15 }}
+                  transition={{ delay: 0.3 + index * 0.15 }}
                   className="flex items-center gap-3"
                 >
                   <div className="w-2 h-2 rounded-full bg-accent-400" />
@@ -102,7 +85,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -110,7 +92,6 @@ export default function LoginPage() {
           transition={{ duration: 0.6 }}
           className="w-full max-w-md"
         >
-          {/* Mobile Logo */}
           <div className="lg:hidden flex items-center gap-2 mb-8">
             <Link to="/" className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
@@ -144,7 +125,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
                   placeholder="user@crestech.co.tz"
                   required
                   className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
@@ -159,14 +140,14 @@ export default function LoginPage() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(event) => setPassword(event.target.value)}
                   placeholder="Enter your password"
                   required
                   className="w-full pl-12 pr-12 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword((current) => !current)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -204,7 +185,7 @@ export default function LoginPage() {
 
           <div className="mt-8 text-center">
             <p className="text-gray-500 text-sm">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link to="/register" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">
                 Sign Up
               </Link>
@@ -213,7 +194,7 @@ export default function LoginPage() {
 
           <div className="mt-6 p-4 rounded-xl bg-primary-500/5 border border-primary-500/10">
             <p className="text-xs text-gray-500 text-center">
-              <span className="text-primary-400 font-medium">Demo credentials:</span> user@crestech.co.tz / user123
+              <span className="text-primary-400 font-medium">Seed credentials:</span> user@crestech.co.tz / user123
             </p>
           </div>
 

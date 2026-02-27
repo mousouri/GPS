@@ -1,80 +1,94 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getAdminDashboardData, type AdminRecentUser } from '../lib/api';
 import {
   MapPin, LogOut, Bell, Search, ChevronDown, ShieldCheck,
   LayoutDashboard, Users, CreditCard, BarChart3, Settings, Globe,
-  TrendingUp, TrendingDown, DollarSign, UserPlus, Activity,
-  Server, Database, Cpu, HardDrive, Eye, MoreHorizontal,
-  CheckCircle, XCircle, Clock, ArrowUpRight,
+  DollarSign, UserPlus, Server, Database, Cpu, HardDrive,
+  ArrowUpRight,
 } from 'lucide-react';
-
-// Sample admin data
-const platformStats = [
-  { label: 'Total Users', value: '12,847', icon: Users, color: 'primary', change: '+12.5%', trend: 'up' },
-  { label: 'Revenue (MTD)', value: '$284,930', icon: DollarSign, color: 'accent', change: '+8.3%', trend: 'up' },
-  { label: 'Active Devices', value: '38,291', icon: Globe, color: 'blue', change: '+15.2%', trend: 'up' },
-  { label: 'New Signups', value: '342', icon: UserPlus, color: 'purple', change: '-2.1%', trend: 'down' },
-];
-
-const recentUsers = [
-  { id: 1, name: 'Anderson Logistics', email: 'contact@crestech.co.tz', plan: 'Enterprise', devices: 156, status: 'active', revenue: '$4,200/mo', joinDate: 'Feb 15, 2026', avatar: '/images/person-businessman.jpg' },
-  { id: 2, name: 'Swift Transport', email: 'info@crestech.co.tz', plan: 'Professional', devices: 48, status: 'active', revenue: '$1,800/mo', joinDate: 'Feb 12, 2026', avatar: '/images/person-man-1.jpg' },
-  { id: 3, name: 'Metro Delivery Co.', email: 'ops@crestech.co.tz', plan: 'Starter', devices: 12, status: 'trial', revenue: '$0 (trial)', joinDate: 'Feb 20, 2026', avatar: '/images/person-businessman-2.jpg' },
-  { id: 4, name: 'Pacific Fleet Inc.', email: 'fleet@crestech.co.tz', plan: 'Enterprise', devices: 230, status: 'active', revenue: '$6,500/mo', joinDate: 'Jan 08, 2026', avatar: '/images/person-man-2.jpg' },
-  { id: 5, name: 'City Cab Services', email: 'admin@crestech.co.tz', plan: 'Professional', devices: 75, status: 'past_due', revenue: '$2,100/mo', joinDate: 'Dec 03, 2025', avatar: '/images/person-man-3.jpg' },
-  { id: 6, name: 'Global Marine Ltd.', email: 'ops@crestech.co.tz', plan: 'Enterprise', devices: 89, status: 'active', revenue: '$3,800/mo', joinDate: 'Feb 22, 2026', avatar: '/images/person-woman-6.jpg' },
-];
-
-const systemHealth = [
-  { label: 'API Server', status: 'operational', uptime: '99.99%', icon: Server },
-  { label: 'Database Cluster', status: 'operational', uptime: '99.97%', icon: Database },
-  { label: 'GPS Processing', status: 'degraded', uptime: '98.50%', icon: Cpu },
-  { label: 'Storage', status: 'operational', uptime: '99.99%', icon: HardDrive },
-];
-
-const sidebarItems = [
-  { icon: LayoutDashboard, label: 'Overview', active: true, path: '/admin/dashboard' },
-  { icon: Users, label: 'Users', path: '/admin/users/USR-2847' },
-  { icon: CreditCard, label: 'Billing', path: '/admin/billing' },
-  { icon: BarChart3, label: 'Audit Log', path: '/admin/audit-log' },
-  { icon: Globe, label: 'Devices', path: '/admin/dashboard' },
-  { icon: Server, label: 'System', path: '/admin/dashboard' },
-  { icon: Settings, label: 'Settings', path: '/admin/dashboard' },
-];
-
-const revenueData = [
-  { month: 'Sep', value: 220000 },
-  { month: 'Oct', value: 235000 },
-  { month: 'Nov', value: 248000 },
-  { month: 'Dec', value: 261000 },
-  { month: 'Jan', value: 272000 },
-  { month: 'Feb', value: 284930 },
-];
 
 export default function AdminDashboardPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    revenueMTD: '$0',
+    activeDevices: 0,
+    newSignups: 0,
+  });
+  const [recentUsers, setRecentUsers] = useState<AdminRecentUser[]>([]);
+  const [systemHealth, setSystemHealth] = useState<Array<{ label: string; status: string; uptime: string }>>([]);
+  const [revenueData, setRevenueData] = useState<Array<{ month: string; value: number }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const handleLogout = () => {
-    logout();
+  const sidebarItems = [
+    { icon: LayoutDashboard, label: 'Overview', active: true, path: '/admin/dashboard' },
+    { icon: Users, label: 'Users', path: recentUsers[0] ? `/admin/users/${recentUsers[0].id}` : '/admin/dashboard' },
+    { icon: CreditCard, label: 'Billing', path: '/admin/billing' },
+    { icon: BarChart3, label: 'Audit Log', path: '/admin/audit-log' },
+    { icon: Globe, label: 'Devices', path: '/admin/dashboard' },
+    { icon: Server, label: 'System', path: '/admin/dashboard' },
+    { icon: Settings, label: 'Settings', path: '/admin/dashboard' },
+  ];
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadAdminDashboard() {
+      try {
+        const response = await getAdminDashboardData();
+        if (!isMounted) {
+          return;
+        }
+        setStats(response.stats);
+        setRecentUsers(response.recentUsers);
+        setSystemHealth(response.systemHealth);
+        setRevenueData(response.revenueData);
+      } catch (requestError) {
+        if (!isMounted) {
+          return;
+        }
+        setError(requestError instanceof Error ? requestError.message : 'Unable to load admin dashboard.');
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadAdminDashboard();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 
-  const maxRevenue = Math.max(...revenueData.map((d) => d.value));
+  const maxRevenue = Math.max(...revenueData.map((point) => point.value), 1);
+
+  const notifications = [
+    'System metrics are synced from the backend API.',
+    'Billing and audit pages now run on live data.',
+    'User detail pages can suspend and reactivate accounts.',
+  ];
 
   return (
     <div className="min-h-screen bg-dark-950 flex pt-0">
-      {/* Sidebar */}
       <motion.aside
         initial={{ x: -280 }}
         animate={{ x: 0 }}
         transition={{ duration: 0.5 }}
         className="fixed left-0 top-0 bottom-0 w-64 glass-strong border-r border-white/5 z-50 flex flex-col"
       >
-        {/* Logo */}
         <div className="p-6 border-b border-white/5">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
@@ -90,7 +104,6 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Nav Items */}
         <nav className="flex-1 p-4 space-y-1">
           {sidebarItems.map((item) => (
             <Link key={item.label} to={item.path}>
@@ -109,7 +122,6 @@ export default function AdminDashboardPage() {
           ))}
         </nav>
 
-        {/* Admin User */}
         <div className="p-4 border-t border-white/5">
           <div className="flex items-center gap-3 px-3 py-2">
             <img
@@ -125,9 +137,7 @@ export default function AdminDashboardPage() {
         </div>
       </motion.aside>
 
-      {/* Main Content */}
       <div className="flex-1 ml-64">
-        {/* Top Bar */}
         <header className="sticky top-0 z-40 glass-strong border-b border-white/5">
           <div className="flex items-center justify-between px-8 py-4">
             <div className="flex items-center gap-4 flex-1">
@@ -145,7 +155,7 @@ export default function AdminDashboardPage() {
               <div className="relative">
                 <motion.button
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowNotifications(!showNotifications)}
+                  onClick={() => setShowNotifications((current) => !current)}
                   className="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors"
                 >
                   <Bell className="w-5 h-5 text-gray-400" />
@@ -164,27 +174,12 @@ export default function AdminDashboardPage() {
                         <h3 className="font-semibold text-white">System Alerts</h3>
                       </div>
                       <div className="p-4 space-y-3">
-                        <div className="flex items-start gap-3 p-3 rounded-xl bg-yellow-500/5">
-                          <div className="w-2 h-2 mt-1.5 rounded-full bg-yellow-500" />
-                          <div>
-                            <p className="text-sm text-gray-300">GPS Processing latency increased</p>
-                            <p className="text-xs text-gray-500 mt-1">15 min ago</p>
+                        {notifications.map((notification) => (
+                          <div key={notification} className="flex items-start gap-3 p-3 rounded-xl bg-white/5">
+                            <div className="w-2 h-2 mt-1.5 rounded-full bg-primary-500" />
+                            <p className="text-sm text-gray-300">{notification}</p>
                           </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 rounded-xl bg-red-500/5">
-                          <div className="w-2 h-2 mt-1.5 rounded-full bg-red-500" />
-                          <div>
-                            <p className="text-sm text-gray-300">Payment failed: City Cab Services</p>
-                            <p className="text-xs text-gray-500 mt-1">1 hr ago</p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 rounded-xl bg-primary-500/5">
-                          <div className="w-2 h-2 mt-1.5 rounded-full bg-primary-500" />
-                          <div>
-                            <p className="text-sm text-gray-300">New enterprise signup: Global Marine</p>
-                            <p className="text-xs text-gray-500 mt-1">3 hr ago</p>
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </motion.div>
                   )}
@@ -214,9 +209,7 @@ export default function AdminDashboardPage() {
           </div>
         </header>
 
-        {/* Dashboard Content */}
         <div className="p-8">
-          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -229,7 +222,7 @@ export default function AdminDashboardPage() {
               <p className="text-gray-400 mt-1">Platform overview & management</p>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-500">Last updated: Just now</span>
+              <span className="text-xs text-gray-500">Live data feed enabled</span>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -240,230 +233,145 @@ export default function AdminDashboardPage() {
             </div>
           </motion.div>
 
-          {/* Stats Grid */}
+          {error && (
+            <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-300">
+              {error}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-            {platformStats.map((stat, i) => (
+            {[
+              { label: 'Total Users', value: stats.totalUsers.toLocaleString(), icon: Users },
+              { label: 'Revenue (MTD)', value: stats.revenueMTD, icon: DollarSign },
+              { label: 'Active Devices', value: stats.activeDevices.toLocaleString(), icon: Globe },
+              { label: 'New Signups', value: stats.newSignups.toLocaleString(), icon: UserPlus },
+            ].map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: index * 0.1 }}
                 className="glass rounded-2xl p-5 hover:bg-white/[0.07] transition-all"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                    stat.color === 'primary' ? 'bg-primary-500/10 text-primary-400' :
-                    stat.color === 'accent' ? 'bg-accent-500/10 text-accent-400' :
-                    stat.color === 'blue' ? 'bg-primary-500/10 text-primary-400' :
-                    'bg-purple-500/10 text-purple-400'
-                  }`}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-red-500/10 text-red-400">
                     <stat.icon className="w-5 h-5" />
                   </div>
-                  <span className={`flex items-center gap-1 text-xs font-medium ${
-                    stat.trend === 'up' ? 'text-accent-400' : 'text-red-400'
-                  }`}>
-                    {stat.trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                    {stat.change}
+                  <span className="flex items-center gap-1 text-xs font-medium text-accent-400">
+                    <ArrowUpRight className="w-3 h-3" />
+                    live
                   </span>
                 </div>
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
-                <p className="text-sm text-gray-400 mt-1">{stat.label}</p>
+                <h3 className="text-2xl font-bold text-white">{isLoading ? '...' : stat.value}</h3>
+                <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
               </motion.div>
             ))}
           </div>
 
-          {/* Revenue Chart + System Health */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            {/* Revenue Chart */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="lg:col-span-2 glass rounded-2xl p-6"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-semibold text-white flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-primary-400" />
-                  Revenue Trend
-                </h3>
-                <span className="text-xs text-gray-500">Last 6 months</span>
-              </div>
-              <div className="flex items-end gap-4 h-48">
-                {revenueData.map((d, i) => (
-                  <motion.div
-                    key={d.month}
-                    initial={{ height: 0 }}
-                    animate={{ height: `${(d.value / maxRevenue) * 100}%` }}
-                    transition={{ delay: 0.5 + i * 0.1, duration: 0.6 }}
-                    className="flex-1 relative group cursor-pointer"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary-600 to-primary-400 rounded-xl opacity-80 group-hover:opacity-100 transition-opacity" />
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      ${(d.value / 1000).toFixed(0)}k
-                    </div>
-                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-gray-500">
-                      {d.month}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-              <div className="mt-10 flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <ArrowUpRight className="w-4 h-4 text-accent-400" />
-                  <span className="text-gray-400">Monthly growth: <span className="text-accent-400 font-medium">+4.7%</span></span>
-                </div>
-                <span className="text-gray-500">Projected: $310k</span>
-              </div>
-            </motion.div>
-
-            {/* System Health */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="glass rounded-2xl"
+              className="xl:col-span-2 glass rounded-2xl p-6"
             >
-              <div className="p-5 border-b border-white/5">
-                <h3 className="font-semibold text-white flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-accent-400" />
-                  System Health
-                </h3>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-semibold text-white">Revenue Trend</h3>
+                <span className="text-xs text-gray-500">Last 6 billing periods</span>
               </div>
-              <div className="p-4 space-y-3">
-                {systemHealth.map((sys, i) => (
-                  <motion.div
-                    key={sys.label}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 + i * 0.1 }}
-                    className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <sys.icon className="w-4 h-4 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-white">{sys.label}</p>
-                        <p className="text-xs text-gray-500">Uptime: {sys.uptime}</p>
-                      </div>
-                    </div>
-                    <span className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${
-                      sys.status === 'operational'
-                        ? 'bg-accent-500/10 text-accent-400'
-                        : 'bg-yellow-500/10 text-yellow-400'
-                    }`}>
-                      {sys.status === 'operational' ? <CheckCircle className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
-                      {sys.status === 'operational' ? 'OK' : 'Degraded'}
-                    </span>
-                  </motion.div>
+              <div className="flex items-end gap-4 h-40">
+                {revenueData.map((point, index) => (
+                  <div key={point.month} className="flex-1 flex flex-col items-center gap-2">
+                    <span className="text-xs text-gray-500">${point.value.toLocaleString()}</span>
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: `${(point.value / maxRevenue) * 100}%` }}
+                      transition={{ delay: 0.5 + index * 0.08, duration: 0.4 }}
+                      className="w-full rounded-t-lg bg-gradient-to-t from-red-600 to-red-400 min-h-[6px]"
+                    />
+                    <span className="text-xs text-gray-600">{point.month}</span>
+                  </div>
                 ))}
               </div>
-              <div className="p-4 border-t border-white/5">
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>Overall: 99.61% uptime</span>
-                  <span className="text-accent-400">All systems nominal</span>
-                </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="glass rounded-2xl p-6"
+            >
+              <h3 className="font-semibold text-white mb-4">System Health</h3>
+              <div className="space-y-3">
+                {systemHealth.map((entry) => {
+                  const Icon = entry.label.includes('API')
+                    ? Server
+                    : entry.label.includes('Database')
+                      ? Database
+                      : entry.label.includes('GPS')
+                        ? Cpu
+                        : HardDrive;
+                  return (
+                    <div key={entry.label} className="p-3 rounded-xl bg-white/5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center">
+                            <Icon className="w-4 h-4 text-primary-400" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-white">{entry.label}</p>
+                            <p className="text-xs text-gray-500">{entry.uptime} uptime</p>
+                          </div>
+                        </div>
+                        <span className="text-xs text-accent-400">{entry.status}</span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </motion.div>
           </div>
 
-          {/* Users Table */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="glass rounded-2xl overflow-hidden"
+            transition={{ delay: 0.6 }}
+            className="glass rounded-2xl p-6"
           >
-            <div className="p-5 border-b border-white/5 flex items-center justify-between">
-              <h3 className="font-semibold text-white flex items-center gap-2">
-                <Users className="w-4 h-4 text-primary-400" />
-                Recent Users & Companies
-              </h3>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="text-xs text-primary-400 hover:text-primary-300 transition-colors"
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-semibold text-white">Recent Customers</h3>
+              <Link
+                to={recentUsers[0] ? `/admin/users/${recentUsers[0].id}` : '/admin/dashboard'}
+                className="text-sm text-red-400 hover:text-red-300 transition-colors"
               >
-                View All →
-              </motion.button>
+                View user detail
+              </Link>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-white/5">
-                    <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Devices</th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue</th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {recentUsers.map((u, i) => (
-                    <motion.tr
-                      key={u.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.6 + i * 0.05 }}
-                      className="hover:bg-white/5 transition-colors"
-                    >
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover" />
-                          <div>
-                            <p className="text-sm font-medium text-white">{u.name}</p>
-                            <p className="text-xs text-gray-500">{u.email}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                          u.plan === 'Enterprise' ? 'bg-purple-500/10 text-purple-400' :
-                          u.plan === 'Professional' ? 'bg-primary-500/10 text-primary-400' :
-                          'bg-gray-500/10 text-gray-400'
-                        }`}>
-                          {u.plan}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4 text-sm text-gray-300">{u.devices}</td>
-                      <td className="px-5 py-4">
-                        <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${
-                          u.status === 'active' ? 'bg-accent-500/10 text-accent-400' :
-                          u.status === 'trial' ? 'bg-primary-500/10 text-primary-400' :
-                          'bg-red-500/10 text-red-400'
-                        }`}>
-                          {u.status === 'active' ? <CheckCircle className="w-3 h-3" /> :
-                           u.status === 'trial' ? <Clock className="w-3 h-3" /> :
-                           <XCircle className="w-3 h-3" />}
-                          {u.status === 'active' ? 'Active' : u.status === 'trial' ? 'Trial' : 'Past Due'}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4 text-sm text-gray-300">{u.revenue}</td>
-                      <td className="px-5 py-4 text-sm text-gray-400">{u.joinDate}</td>
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-2">
-                          <button className="p-1.5 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <button className="p-1.5 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="p-4 border-t border-white/5 flex items-center justify-between">
-              <span className="text-xs text-gray-500">Showing 6 of 12,847 users</span>
-              <div className="flex items-center gap-2">
-                <button className="px-3 py-1.5 text-xs text-gray-400 rounded-lg hover:bg-white/5 transition-colors">Previous</button>
-                <button className="px-3 py-1.5 text-xs text-white bg-white/10 rounded-lg">1</button>
-                <button className="px-3 py-1.5 text-xs text-gray-400 rounded-lg hover:bg-white/5 transition-colors">2</button>
-                <button className="px-3 py-1.5 text-xs text-gray-400 rounded-lg hover:bg-white/5 transition-colors">3</button>
-                <button className="px-3 py-1.5 text-xs text-gray-400 rounded-lg hover:bg-white/5 transition-colors">Next</button>
-              </div>
+            <div className="space-y-3">
+              {recentUsers.map((entry) => (
+                <Link key={entry.id} to={`/admin/users/${entry.id}`} className="block">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/8 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <img src={entry.avatar} alt={entry.name} className="w-10 h-10 rounded-xl object-cover" />
+                      <div>
+                        <p className="text-sm font-medium text-white">{entry.name}</p>
+                        <p className="text-xs text-gray-500">{entry.email}</p>
+                      </div>
+                    </div>
+                    <div className="hidden md:block text-right">
+                      <p className="text-sm text-white">{entry.devices} devices</p>
+                      <p className="text-xs text-gray-500">{entry.joinDate}</p>
+                    </div>
+                    <div className="hidden md:block">
+                      <span className="px-2.5 py-1 rounded-full text-xs bg-red-500/10 text-red-300">{entry.plan}</span>
+                    </div>
+                    <p className="text-sm text-accent-400">{entry.revenue}</p>
+                  </div>
+                </Link>
+              ))}
+              {!isLoading && recentUsers.length === 0 && (
+                <div className="text-sm text-gray-500">No customer records available.</div>
+              )}
             </div>
           </motion.div>
         </div>

@@ -1,26 +1,12 @@
-import { useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  ArrowLeft, Shield, Search, Filter, ChevronDown, Clock,
-  User, Settings, Trash2, Edit3, LogIn, LogOut, AlertTriangle,
+  ArrowLeft, Shield, Search, ChevronDown, Clock,
+  User, Settings, Edit3, LogIn, AlertTriangle,
   Key, Database, Download, Eye,
 } from 'lucide-react';
-
-const auditEntries = [
-  { id: 1, admin: 'John Admin', action: 'User Suspended', target: 'user@crestech.co.tz', category: 'user', severity: 'high', timestamp: '2024-12-21 14:32:05', ip: '192.168.1.45', details: 'Suspended user account for policy violation' },
-  { id: 2, admin: 'System', action: 'Auto-Backup Completed', target: 'Database', category: 'system', severity: 'info', timestamp: '2024-12-21 14:00:00', ip: 'Internal', details: 'Scheduled daily backup completed successfully' },
-  { id: 3, admin: 'Jane Admin', action: 'Plan Changed', target: 'acme@corp.com', category: 'billing', severity: 'medium', timestamp: '2024-12-21 13:15:22', ip: '10.0.0.12', details: 'Changed plan from Professional to Enterprise' },
-  { id: 4, admin: 'John Admin', action: 'Admin Login', target: 'admin@crestech.co.tz', category: 'auth', severity: 'info', timestamp: '2024-12-21 12:45:00', ip: '192.168.1.45', details: 'Successful admin login' },
-  { id: 5, admin: 'Jane Admin', action: 'API Key Generated', target: 'GlobalShip LLC', category: 'security', severity: 'high', timestamp: '2024-12-21 11:30:44', ip: '10.0.0.12', details: 'New API key generated for client integration' },
-  { id: 6, admin: 'System', action: 'Failed Login Attempt', target: 'unknown@test.com', category: 'auth', severity: 'critical', timestamp: '2024-12-21 10:22:18', ip: '203.0.113.42', details: '5 consecutive failed login attempts detected' },
-  { id: 7, admin: 'John Admin', action: 'Device Deleted', target: 'DEV-892', category: 'device', severity: 'medium', timestamp: '2024-12-21 09:55:10', ip: '192.168.1.45', details: 'Removed device from fleet management' },
-  { id: 8, admin: 'System', action: 'SSL Certificate Renewed', target: 'crestech.co.tz', category: 'system', severity: 'info', timestamp: '2024-12-21 08:00:00', ip: 'Internal', details: 'Auto-renewal of SSL certificate completed' },
-  { id: 9, admin: 'Jane Admin', action: 'User Created', target: 'newuser@fleet.com', category: 'user', severity: 'low', timestamp: '2024-12-20 17:40:33', ip: '10.0.0.12', details: 'Created new user account with Starter plan' },
-  { id: 10, admin: 'John Admin', action: 'Geofence Modified', target: 'Zone GF-003', category: 'config', severity: 'medium', timestamp: '2024-12-20 16:15:09', ip: '192.168.1.45', details: 'Updated geofence radius from 300m to 500m' },
-  { id: 11, admin: 'System', action: 'High CPU Alert', target: 'Server Node 2', category: 'system', severity: 'critical', timestamp: '2024-12-20 14:30:00', ip: 'Internal', details: 'CPU utilization exceeded 95% threshold' },
-  { id: 12, admin: 'Jane Admin', action: 'Admin Logout', target: 'jane@crestech.co.tz', category: 'auth', severity: 'info', timestamp: '2024-12-20 13:00:00', ip: '10.0.0.12', details: 'Admin session ended' },
-];
+import { getAdminAuditLogData, type AdminAuditEntry } from '../lib/api';
 
 const categoryIcons: Record<string, typeof User> = {
   user: User,
@@ -45,16 +31,65 @@ export default function AdminAuditLogPage() {
   const [filterSeverity, setFilterSeverity] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
-
-  const filtered = auditEntries.filter((e) => {
-    if (filterCategory !== 'all' && e.category !== filterCategory) return false;
-    if (filterSeverity !== 'all' && e.severity !== filterSeverity) return false;
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      return e.admin.toLowerCase().includes(q) || e.action.toLowerCase().includes(q) || e.target.toLowerCase().includes(q);
-    }
-    return true;
+  const [summary, setSummary] = useState({
+    totalEvents: 0,
+    criticalEvents: 0,
+    adminActions: 0,
+    systemEvents: 0,
   });
+  const [entries, setEntries] = useState<AdminAuditEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadAuditLog() {
+      try {
+        const response = await getAdminAuditLogData();
+        if (!isMounted) {
+          return;
+        }
+        setSummary(response.summary);
+        setEntries(response.entries);
+      } catch (requestError) {
+        if (!isMounted) {
+          return;
+        }
+        setError(requestError instanceof Error ? requestError.message : 'Unable to load audit log.');
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadAuditLog();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filtered = useMemo(() => (
+    entries.filter((entry) => {
+      if (filterCategory !== 'all' && entry.category !== filterCategory) {
+        return false;
+      }
+      if (filterSeverity !== 'all' && entry.severity !== filterSeverity) {
+        return false;
+      }
+      if (!searchQuery.trim()) {
+        return true;
+      }
+      const query = searchQuery.toLowerCase();
+      return (
+        entry.admin.toLowerCase().includes(query) ||
+        entry.action.toLowerCase().includes(query) ||
+        entry.target.toLowerCase().includes(query)
+      );
+    })
+  ), [entries, filterCategory, filterSeverity, searchQuery]);
 
   return (
     <div className="min-h-screen bg-dark-950">
@@ -75,35 +110,39 @@ export default function AdminAuditLogPage() {
       </header>
 
       <div className="max-w-7xl mx-auto p-6">
-        {/* Summary */}
+        {error && (
+          <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-300">
+            {error}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total Events', value: '2,847', period: 'Last 30 days', icon: Clock },
-            { label: 'Critical Events', value: '12', period: 'Needs attention', icon: AlertTriangle },
-            { label: 'Admin Actions', value: '156', period: 'This week', icon: User },
-            { label: 'System Events', value: '1,423', period: 'Automated', icon: Database },
-          ].map((s, i) => (
+            { label: 'Total Events', value: summary.totalEvents, period: 'Live dataset', icon: Clock },
+            { label: 'Critical Events', value: summary.criticalEvents, period: 'Needs attention', icon: AlertTriangle },
+            { label: 'Admin Actions', value: summary.adminActions, period: 'Operator initiated', icon: User },
+            { label: 'System Events', value: summary.systemEvents, period: 'Automated', icon: Database },
+          ].map((card, index) => (
             <motion.div
-              key={s.label}
+              key={card.label}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
+              transition={{ delay: index * 0.1 }}
               className="glass rounded-2xl border border-white/5 p-4"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center">
-                  <s.icon className="w-5 h-5 text-primary-400" />
+                  <card.icon className="w-5 h-5 text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold text-white">{s.value}</p>
-                  <p className="text-xs text-gray-500">{s.label}</p>
+                  <p className="text-xl font-bold text-white">{isLoading ? '...' : card.value}</p>
+                  <p className="text-xs text-gray-500">{card.label}</p>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Filters */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -113,13 +152,20 @@ export default function AdminAuditLogPage() {
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-              <input type="text" placeholder="Search events..." value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/30" />
+              <input
+                type="text"
+                placeholder="Search events..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/30"
+              />
             </div>
             <div className="relative">
-              <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}
-                className="pl-4 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500/30">
+              <select
+                value={filterCategory}
+                onChange={(event) => setFilterCategory(event.target.value)}
+                className="pl-4 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500/30"
+              >
                 <option value="all">All Categories</option>
                 <option value="user">User</option>
                 <option value="auth">Auth</option>
@@ -132,8 +178,11 @@ export default function AdminAuditLogPage() {
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500 pointer-events-none" />
             </div>
             <div className="relative">
-              <select value={filterSeverity} onChange={(e) => setFilterSeverity(e.target.value)}
-                className="pl-4 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500/30">
+              <select
+                value={filterSeverity}
+                onChange={(event) => setFilterSeverity(event.target.value)}
+                className="pl-4 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500/30"
+              >
                 <option value="all">All Severity</option>
                 <option value="critical">Critical</option>
                 <option value="high">High</option>
@@ -145,7 +194,6 @@ export default function AdminAuditLogPage() {
             </div>
           </div>
 
-          {/* Log Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -161,48 +209,48 @@ export default function AdminAuditLogPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((e) => {
-                  const Icon = categoryIcons[e.category] || Settings;
+                {filtered.map((entry) => {
+                  const Icon = categoryIcons[entry.category] || Settings;
                   return (
-                    <>
-                      <tr key={e.id}
+                    <Fragment key={entry.id}>
+                      <tr
                         className={`border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer ${
-                          expandedRow === e.id ? 'bg-white/5' : ''
+                          expandedRow === entry.id ? 'bg-white/5' : ''
                         }`}
-                        onClick={() => setExpandedRow(expandedRow === e.id ? null : e.id)}
+                        onClick={() => setExpandedRow(expandedRow === entry.id ? null : entry.id)}
                       >
                         <td className="py-3 px-3">
                           <div className="flex items-center gap-2">
                             <Clock className="w-3 h-3 text-gray-600" />
-                            <span className="text-xs text-gray-400 font-mono">{e.timestamp}</span>
+                            <span className="text-xs text-gray-400 font-mono">{entry.timestamp}</span>
                           </div>
                         </td>
                         <td className="py-3 px-3">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-medium border ${severityColors[e.severity]}`}>
-                            {e.severity}
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-medium border ${severityColors[entry.severity]}`}>
+                            {entry.severity}
                           </span>
                         </td>
-                        <td className="py-3 px-3 text-sm text-white">{e.admin}</td>
-                        <td className="py-3 px-3 text-sm text-gray-300">{e.action}</td>
-                        <td className="py-3 px-3 text-sm text-primary-400 font-mono">{e.target}</td>
+                        <td className="py-3 px-3 text-sm text-white">{entry.admin}</td>
+                        <td className="py-3 px-3 text-sm text-gray-300">{entry.action}</td>
+                        <td className="py-3 px-3 text-sm text-primary-400 font-mono">{entry.target}</td>
                         <td className="py-3 px-3">
                           <span className="flex items-center gap-1.5 text-xs text-gray-500 capitalize">
-                            <Icon className="w-3 h-3" /> {e.category}
+                            <Icon className="w-3 h-3" /> {entry.category}
                           </span>
                         </td>
-                        <td className="py-3 px-3 text-xs text-gray-600 font-mono">{e.ip}</td>
+                        <td className="py-3 px-3 text-xs text-gray-600 font-mono">{entry.ip}</td>
                         <td className="py-3 px-3">
                           <Eye className="w-3 h-3 text-gray-600" />
                         </td>
                       </tr>
-                      {expandedRow === e.id && (
-                        <tr key={`${e.id}-detail`}>
+                      {expandedRow === entry.id && (
+                        <tr>
                           <td colSpan={8} className="px-6 py-3 bg-white/[0.02] border-b border-white/5">
-                            <p className="text-sm text-gray-400">{e.details}</p>
+                            <p className="text-sm text-gray-400">{entry.details}</p>
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
               </tbody>
