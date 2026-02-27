@@ -60,13 +60,17 @@ export default function HomePage() {
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
-          <img
+          <motion.img
             src="/images/laptops-workspace.jpg"
             alt="GPS Technology"
+            initial={{ scale: 1.03, y: 0 }}
+            animate={{ scale: [1.03, 1.1, 1.03], y: [0, -12, 0] }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-dark-950/95 via-dark-950/80 to-dark-950/60" />
           <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(123,47,255,0.16),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(167,139,250,0.12),transparent_36%)]" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">

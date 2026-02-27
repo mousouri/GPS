@@ -136,12 +136,27 @@ export default function FeaturesPage() {
       {/* Hero Banner */}
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src="/images/earth-night.jpg"
-            alt="Technology Background"
+          <motion.video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/images/earth-night.jpg"
+            initial={{ scale: 1.04 }}
+            animate={{ scale: [1.04, 1.12, 1.04] }}
+            transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
             className="w-full h-full object-cover"
+          >
+            <source src="/videos/features-hero.webm" type="video/webm" />
+            <source src="/videos/features-hero.mp4" type="video/mp4" />
+          </motion.video>
+          <div className="absolute inset-0 bg-gradient-to-r from-dark-950/90 via-dark-950/75 to-dark-950/85" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(123,47,255,0.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(167,139,250,0.18),transparent_40%)]" />
+          <motion.div
+            animate={{ opacity: [0.18, 0.32, 0.18] }}
+            transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute inset-0 bg-dark-950/55"
           />
-          <div className="absolute inset-0 bg-dark-950/80" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
