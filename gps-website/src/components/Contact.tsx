@@ -10,6 +10,7 @@ export default function Contact() {
     email: '',
     company: '',
     phone: '',
+    region: '',
     service: '',
     message: '',
   });
@@ -26,9 +27,9 @@ export default function Contact() {
   };
 
   const contactInfo = [
-    { icon: MapPin, label: 'Office', value: '123 Innovation Drive, San Francisco, CA 94105' },
-    { icon: Phone, label: 'Phone', value: '+1 (800) 555-TRACK' },
-    { icon: Mail, label: 'Email', value: 'hello@trackpro-gps.com' },
+    { icon: MapPin, label: 'Office', value: 'Plot 42, Sam Nujoma Road, Dar es Salaam, Tanzania' },
+    { icon: Phone, label: 'Phone', value: '+255 719 600 648' },
+    { icon: Mail, label: 'Email', value: 'hello@crestech.co.tz' },
     { icon: Clock, label: 'Hours', value: '24/7 Support Available' },
   ];
 
@@ -49,12 +50,13 @@ export default function Contact() {
           className="text-center mb-16"
         >
           <span className="inline-block px-4 py-1.5 rounded-full glass text-sm text-primary-400 font-medium mb-4">
-            Contact Us
+            Contact CRESTECH
           </span>
           <h2 className="text-4xl sm:text-5xl font-bold mb-6">
             <span className="text-white">Get In </span>
             <span className="gradient-text">Touch</span>
           </h2>
+          <p className="text-primary-400 text-lg font-semibold mt-2">Simple, Reliable, Local.</p>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Ready to transform your tracking? Reach out to our team and we'll 
             help you find the perfect solution for your needs.
@@ -143,7 +145,7 @@ export default function Contact() {
                     name="email"
                     value={formState.email}
                     onChange={handleChange}
-                    placeholder="john@company.com"
+                    placeholder="john@crestech.co.tz"
                     required
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all text-sm"
                   />
@@ -152,13 +154,13 @@ export default function Contact() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1.5">Company</label>
+                  <label className="block text-sm text-gray-400 mb-1.5">Company (CRESTECH)</label>
                   <input
                     type="text"
                     name="company"
                     value={formState.company}
                     onChange={handleChange}
-                    placeholder="Your Company"
+                    placeholder="CRESTECH"
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all text-sm"
                   />
                 </div>
@@ -173,6 +175,40 @@ export default function Contact() {
                     className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all text-sm"
                   />
                 </div>
+              </div>
+
+
+              <div className="mb-4">
+                <label className="block text-sm text-gray-400 mb-1.5">Region</label>
+                <select
+                  name="region"
+                  value={formState.region}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all text-sm appearance-none"
+                >
+                  <option value="" className="bg-dark-900">Select a region</option>
+                  <option value="Dar es Salaam" className="bg-dark-900">Dar es Salaam</option>
+                  <option value="Arusha" className="bg-dark-900">Arusha</option>
+                  <option value="Mwanza" className="bg-dark-900">Mwanza</option>
+                  <option value="Mbeya" className="bg-dark-900">Mbeya</option>
+                  <option value="Dodoma" className="bg-dark-900">Dodoma</option>
+                  <option value="Kilimanjaro" className="bg-dark-900">Kilimanjaro</option>
+                  <option value="Tabora" className="bg-dark-900">Tabora</option>
+                  <option value="Morogoro" className="bg-dark-900">Morogoro</option>
+                  <option value="Tanga" className="bg-dark-900">Tanga</option>
+                  <option value="Mtwara" className="bg-dark-900">Mtwara</option>
+                  <option value="Singida" className="bg-dark-900">Singida</option>
+                  <option value="Shinyanga" className="bg-dark-900">Shinyanga</option>
+                  <option value="Ruvuma" className="bg-dark-900">Ruvuma</option>
+                  <option value="Kagera" className="bg-dark-900">Kagera</option>
+                  <option value="Mara" className="bg-dark-900">Mara</option>
+                  <option value="Lindi" className="bg-dark-900">Lindi</option>
+                  <option value="Manyara" className="bg-dark-900">Manyara</option>
+                  <option value="Katavi" className="bg-dark-900">Katavi</option>
+                  <option value="Njombe" className="bg-dark-900">Njombe</option>
+                  <option value="Simiyu" className="bg-dark-900">Simiyu</option>
+                  <option value="Songwe" className="bg-dark-900">Songwe</option>
+                </select>
               </div>
 
               <div className="mb-4">

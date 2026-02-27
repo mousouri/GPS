@@ -6,7 +6,7 @@ export interface User {
   email: string;
   role: 'user' | 'admin';
   avatar?: string;
-  company?: string;
+  company?: string; // CRESTECH
   plan?: string;
   joinDate?: string;
 }
@@ -24,28 +24,28 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 // Demo users for simulation
 const DEMO_USERS: Record<string, { password: string; user: User }> = {
-  'user@trackpro.com': {
+  'user@crestech.co.tz': {
     password: 'user123',
     user: {
       id: 'u1',
       name: 'John Anderson',
-      email: 'user@trackpro.com',
+      email: 'user@crestech.co.tz',
       role: 'user',
       avatar: '/images/person-man-2.jpg',
-      company: 'Anderson Logistics',
+      company: 'CRESTECH',
       plan: 'Professional',
       joinDate: '2025-06-15',
     },
   },
-  'admin@trackpro.com': {
+  'admin@crestech.co.tz': {
     password: 'admin123',
     user: {
       id: 'a1',
       name: 'Sarah Mitchell',
-      email: 'admin@trackpro.com',
+      email: 'admin@crestech.co.tz',
       role: 'admin',
       avatar: '/images/person-woman-4.jpg',
-      company: 'TrackPro GPS',
+      company: 'CRESTECH',
       plan: 'Enterprise',
       joinDate: '2024-01-10',
     },
@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('trackpro_user');
+    const saved = localStorage.getItem('crestech_user');
     if (saved) {
       try {
         setUser(JSON.parse(saved));

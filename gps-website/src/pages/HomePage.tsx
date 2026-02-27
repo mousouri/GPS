@@ -420,10 +420,10 @@ export default function HomePage() {
           >
             <h2 className="text-4xl sm:text-5xl font-bold mb-4">
               <span className="text-white">Why Choose </span>
-              <span className="gradient-text">TrackPro?</span>
+              <span className="gradient-text">CRESTECH?</span>
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Industry-leading GPS solutions trusted by thousands of businesses worldwide.
+              Tanzania's trusted GPS and IoT solutions partner.
             </p>
           </motion.div>
 

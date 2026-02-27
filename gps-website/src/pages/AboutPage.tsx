@@ -328,7 +328,7 @@ export default function AboutPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-dark-950/80 via-dark-950/20 to-transparent" />
             <div className="absolute bottom-8 left-8">
               <h3 className="text-2xl font-bold text-white mb-2">Our Headquarters</h3>
-              <p className="text-gray-300">San Francisco, CA — Where innovation meets tracking.</p>
+              <p className="text-gray-300">Dar es Salaam, Tanzania — Where innovation meets tracking.</p>
             </div>
           </motion.div>
         </div>

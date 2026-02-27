@@ -47,7 +47,7 @@ export default function About() {
             <span className="gradient-text">Are</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-            TrackPro GPS is a global leader in GPS tracking and fleet management solutions. 
+            CRESTECH is a leading provider of GPS tracking and IoT solutions in Tanzania. Simple, Reliable, Local.
             We empower businesses and individuals with real-time location intelligence 
             powered by cutting-edge satellite technology.
           </p>

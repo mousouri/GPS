@@ -3,9 +3,9 @@ import { useRef, useState } from 'react';
 import { Send, MapPin, Phone, Mail, Clock, MessageSquare, CheckCircle } from 'lucide-react';
 
 const contactInfo = [
-  { icon: MapPin, label: 'Office', value: '123 Innovation Drive, San Francisco, CA 94105' },
-  { icon: Phone, label: 'Phone', value: '+1 (800) 555-TRACK' },
-  { icon: Mail, label: 'Email', value: 'hello@trackpro-gps.com' },
+  { icon: MapPin, label: 'Office', value: 'Plot 42, Sam Nujoma Road, Dar es Salaam, Tanzania' },
+  { icon: Phone, label: 'Phone', value: '+255 719 600 648' },
+  { icon: Mail, label: 'Email', value: 'hello@crestech.co.tz' },
   { icon: Clock, label: 'Hours', value: '24/7 Support Available' },
 ];
 
@@ -241,10 +241,10 @@ export default function ContactPage() {
             <span className="gradient-text">Offices</span>
           </motion.h2>
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { city: 'San Francisco', country: 'USA — Headquarters', image: '/images/san-francisco.jpg' },
-              { city: 'London', country: 'United Kingdom', image: '/images/london.jpg' },
-              { city: 'Dubai', country: 'UAE — MENA Hub', image: '/images/dubai.jpg' },
+            {[ 
+              { city: 'Dar es Salaam', country: 'Tanzania — Headquarters', image: '/images/san-francisco.jpg' },
+              { city: 'Arusha', country: 'Tanzania', image: '/images/london.jpg' },
+              { city: 'Mwanza', country: 'Tanzania', image: '/images/dubai.jpg' },
             ].map((office, idx) => (
               <motion.div
                 key={office.city}

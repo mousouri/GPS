@@ -14,7 +14,7 @@ export default function ProfilePage() {
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [company, setCompany] = useState(user?.company || '');
-  const [phone, setPhone] = useState('+1 (555) 123-4567');
+  const [phone, setPhone] = useState('0719600648');
   const [timezone, setTimezone] = useState('America/New_York');
 
   // Notification preferences
@@ -130,12 +130,27 @@ export default function ProfilePage() {
                   <label className="block text-sm font-medium text-gray-300 mb-2">Timezone</label>
                   <select value={timezone} onChange={(e) => setTimezone(e.target.value)}
                     className="w-full px-4 py-3 glass rounded-xl text-white bg-transparent focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all">
-                    <option value="America/New_York" className="bg-dark-900">Eastern Time (ET)</option>
-                    <option value="America/Chicago" className="bg-dark-900">Central Time (CT)</option>
-                    <option value="America/Denver" className="bg-dark-900">Mountain Time (MT)</option>
-                    <option value="America/Los_Angeles" className="bg-dark-900">Pacific Time (PT)</option>
-                    <option value="Europe/London" className="bg-dark-900">GMT (London)</option>
-                    <option value="Asia/Dubai" className="bg-dark-900">GST (Dubai)</option>
+                    <option value="Africa/Dar_es_Salaam" className="bg-dark-900">Dar es Salaam</option>
+                    <option value="Arusha" className="bg-dark-900">Arusha</option>
+                    <option value="Mwanza" className="bg-dark-900">Mwanza</option>
+                    <option value="Mbeya" className="bg-dark-900">Mbeya</option>
+                    <option value="Dodoma" className="bg-dark-900">Dodoma</option>
+                    <option value="Kilimanjaro" className="bg-dark-900">Kilimanjaro</option>
+                    <option value="Tabora" className="bg-dark-900">Tabora</option>
+                    <option value="Morogoro" className="bg-dark-900">Morogoro</option>
+                    <option value="Tanga" className="bg-dark-900">Tanga</option>
+                    <option value="Mtwara" className="bg-dark-900">Mtwara</option>
+                    <option value="Singida" className="bg-dark-900">Singida</option>
+                    <option value="Shinyanga" className="bg-dark-900">Shinyanga</option>
+                    <option value="Ruvuma" className="bg-dark-900">Ruvuma</option>
+                    <option value="Kagera" className="bg-dark-900">Kagera</option>
+                    <option value="Mara" className="bg-dark-900">Mara</option>
+                    <option value="Lindi" className="bg-dark-900">Lindi</option>
+                    <option value="Manyara" className="bg-dark-900">Manyara</option>
+                    <option value="Katavi" className="bg-dark-900">Katavi</option>
+                    <option value="Njombe" className="bg-dark-900">Njombe</option>
+                    <option value="Simiyu" className="bg-dark-900">Simiyu</option>
+                    <option value="Songwe" className="bg-dark-900">Songwe</option>
                   </select>
                 </div>
               </div>

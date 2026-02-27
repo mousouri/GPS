@@ -11,15 +11,15 @@ const auditEntries = [
   { id: 1, admin: 'John Admin', action: 'User Suspended', target: 'user@example.com', category: 'user', severity: 'high', timestamp: '2024-12-21 14:32:05', ip: '192.168.1.45', details: 'Suspended user account for policy violation' },
   { id: 2, admin: 'System', action: 'Auto-Backup Completed', target: 'Database', category: 'system', severity: 'info', timestamp: '2024-12-21 14:00:00', ip: 'Internal', details: 'Scheduled daily backup completed successfully' },
   { id: 3, admin: 'Jane Admin', action: 'Plan Changed', target: 'acme@corp.com', category: 'billing', severity: 'medium', timestamp: '2024-12-21 13:15:22', ip: '10.0.0.12', details: 'Changed plan from Professional to Enterprise' },
-  { id: 4, admin: 'John Admin', action: 'Admin Login', target: 'admin@trackpro.com', category: 'auth', severity: 'info', timestamp: '2024-12-21 12:45:00', ip: '192.168.1.45', details: 'Successful admin login' },
+  { id: 4, admin: 'John Admin', action: 'Admin Login', target: 'admin@crestech.co.tz', category: 'auth', severity: 'info', timestamp: '2024-12-21 12:45:00', ip: '192.168.1.45', details: 'Successful admin login' },
   { id: 5, admin: 'Jane Admin', action: 'API Key Generated', target: 'GlobalShip LLC', category: 'security', severity: 'high', timestamp: '2024-12-21 11:30:44', ip: '10.0.0.12', details: 'New API key generated for client integration' },
   { id: 6, admin: 'System', action: 'Failed Login Attempt', target: 'unknown@test.com', category: 'auth', severity: 'critical', timestamp: '2024-12-21 10:22:18', ip: '203.0.113.42', details: '5 consecutive failed login attempts detected' },
   { id: 7, admin: 'John Admin', action: 'Device Deleted', target: 'DEV-892', category: 'device', severity: 'medium', timestamp: '2024-12-21 09:55:10', ip: '192.168.1.45', details: 'Removed device from fleet management' },
-  { id: 8, admin: 'System', action: 'SSL Certificate Renewed', target: 'trackpro.com', category: 'system', severity: 'info', timestamp: '2024-12-21 08:00:00', ip: 'Internal', details: 'Auto-renewal of SSL certificate completed' },
+  { id: 8, admin: 'System', action: 'SSL Certificate Renewed', target: 'crestech.co.tz', category: 'system', severity: 'info', timestamp: '2024-12-21 08:00:00', ip: 'Internal', details: 'Auto-renewal of SSL certificate completed' },
   { id: 9, admin: 'Jane Admin', action: 'User Created', target: 'newuser@fleet.com', category: 'user', severity: 'low', timestamp: '2024-12-20 17:40:33', ip: '10.0.0.12', details: 'Created new user account with Starter plan' },
   { id: 10, admin: 'John Admin', action: 'Geofence Modified', target: 'Zone GF-003', category: 'config', severity: 'medium', timestamp: '2024-12-20 16:15:09', ip: '192.168.1.45', details: 'Updated geofence radius from 300m to 500m' },
   { id: 11, admin: 'System', action: 'High CPU Alert', target: 'Server Node 2', category: 'system', severity: 'critical', timestamp: '2024-12-20 14:30:00', ip: 'Internal', details: 'CPU utilization exceeded 95% threshold' },
-  { id: 12, admin: 'Jane Admin', action: 'Admin Logout', target: 'jane@trackpro.com', category: 'auth', severity: 'info', timestamp: '2024-12-20 13:00:00', ip: '10.0.0.12', details: 'Admin session ended' },
+  { id: 12, admin: 'Jane Admin', action: 'Admin Logout', target: 'jane@crestech.co.tz', category: 'auth', severity: 'info', timestamp: '2024-12-20 13:00:00', ip: '10.0.0.12', details: 'Admin session ended' },
 ];
 
 const categoryIcons: Record<string, typeof User> = {
