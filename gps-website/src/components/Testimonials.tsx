@@ -9,7 +9,7 @@ const testimonials = [
     company: 'Swift Logistics',
     image: 'MJ',
     rating: 5,
-    text: 'TrackPro GPS has transformed our fleet operations. We\'ve reduced fuel costs by 23% and improved delivery times by 15%. The real-time tracking is incredibly accurate and the reporting is comprehensive.',
+    text: 'CRESTECH has transformed our fleet operations. We\'ve reduced fuel costs by 23% and improved delivery times by 15%. The real-time tracking is incredibly accurate and the reporting is comprehensive.',
   },
   {
     name: 'Sarah Chen',
@@ -25,7 +25,7 @@ const testimonials = [
     company: 'Urban Express',
     image: 'DR',
     rating: 5,
-    text: 'With over 500 vehicles in our fleet, we needed a robust solution. TrackPro delivered beyond expectations. The API integration with our existing systems was seamless.',
+    text: 'With over 500 vehicles in our fleet, we needed a robust solution. CRESTECH delivered beyond expectations. The API integration with our existing systems was seamless.',
   },
   {
     name: 'Emma Williams',
@@ -33,7 +33,7 @@ const testimonials = [
     company: 'Apex Construction',
     image: 'EW',
     rating: 5,
-    text: 'We\'ve recovered 3 stolen vehicles thanks to TrackPro\'s anti-theft features. The instant alerts and real-time tracking made it possible. Worth every penny.',
+    text: 'We\'ve recovered 3 stolen vehicles thanks to CRESTECH\'s anti-theft features. The instant alerts and real-time tracking made it possible. Worth every penny.',
   },
   {
     name: 'Ahmed Hassan',
@@ -88,7 +88,7 @@ export default function Testimonials() {
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Trusted by thousands of businesses worldwide. Here's what our clients 
-            have to say about their experience with TrackPro GPS.
+            have to say about their experience with CRESTECH.
           </p>
         </motion.div>
 

@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         setUser(JSON.parse(saved));
       } catch {
-        localStorage.removeItem('trackpro_user');
+        localStorage.removeItem('crestech_user');
       }
     }
   }, []);
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const entry = DEMO_USERS[email.toLowerCase()];
     if (entry && entry.user.role === 'user') {
       setUser(entry.user);
-      localStorage.setItem('trackpro_user', JSON.stringify(entry.user));
+      localStorage.setItem('crestech_user', JSON.stringify(entry.user));
       return true;
     }
     return false;
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const entry = DEMO_USERS[email.toLowerCase()];
     if (entry && entry.user.role === 'admin') {
       setUser(entry.user);
-      localStorage.setItem('trackpro_user', JSON.stringify(entry.user));
+      localStorage.setItem('crestech_user', JSON.stringify(entry.user));
       return true;
     }
     return false;
@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('trackpro_user');
+    localStorage.removeItem('crestech_user');
   };
 
   return (

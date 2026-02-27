@@ -13,7 +13,7 @@ export default function CookieConsent() {
   });
 
   useEffect(() => {
-    const consent = localStorage.getItem('trackpro_cookie_consent');
+    const consent = localStorage.getItem('crestech_cookie_consent');
     if (!consent) {
       const timer = setTimeout(() => setVisible(true), 2000);
       return () => clearTimeout(timer);
@@ -22,21 +22,21 @@ export default function CookieConsent() {
 
   const acceptAll = () => {
     setPrefs({ necessary: true, analytics: true, marketing: true, functional: true });
-    localStorage.setItem('trackpro_cookie_consent', JSON.stringify({
+    localStorage.setItem('crestech_cookie_consent', JSON.stringify({
       necessary: true, analytics: true, marketing: true, functional: true, timestamp: Date.now(),
     }));
     setVisible(false);
   };
 
   const rejectAll = () => {
-    localStorage.setItem('trackpro_cookie_consent', JSON.stringify({
+    localStorage.setItem('crestech_cookie_consent', JSON.stringify({
       necessary: true, analytics: false, marketing: false, functional: false, timestamp: Date.now(),
     }));
     setVisible(false);
   };
 
   const savePrefs = () => {
-    localStorage.setItem('trackpro_cookie_consent', JSON.stringify({
+    localStorage.setItem('crestech_cookie_consent', JSON.stringify({
       ...prefs, timestamp: Date.now(),
     }));
     setVisible(false);

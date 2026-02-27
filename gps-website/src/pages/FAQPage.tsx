@@ -20,14 +20,14 @@ const faqs = [
   {
     id: 1,
     category: 'getting-started',
-    question: 'How do I get started with TrackPro?',
+    question: 'How do I get started with CRESTECH?',
     answer: 'Getting started is easy! Simply sign up for an account, choose your plan, and install our GPS tracking devices on your vehicles. Our onboarding team will guide you through the setup process. Most customers are up and running within 24 hours.',
   },
   {
     id: 2,
     category: 'getting-started',
-    question: 'What devices are compatible with TrackPro?',
-    answer: 'TrackPro is compatible with a wide range of GPS tracking devices including our proprietary TrackPro GPS Pro, GPS Mini, and OBD-II connectors. We also support third-party devices from major manufacturers. Contact our sales team for a complete compatibility list.',
+    question: 'What devices are compatible with CRESTECH?',
+    answer: 'CRESTECH is compatible with a wide range of GPS tracking devices including our proprietary CRESTECH GPS Pro, GPS Mini, and OBD-II connectors. We also support third-party devices from major manufacturers. Contact our sales team for a complete compatibility list.',
   },
   {
     id: 3,
@@ -134,7 +134,7 @@ export default function FAQPage() {
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="text-gray-400 max-w-xl mx-auto mb-8">
-            Find answers to common questions about TrackPro GPS tracking, fleet management features, pricing, and more.
+            Find answers to common questions about CRESTECH GPS tracking, fleet management features, pricing, and more.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
             className="max-w-md mx-auto relative">
@@ -230,7 +230,7 @@ export default function FAQPage() {
               className="px-6 py-3 bg-primary-500 text-dark-950 rounded-xl font-medium hover:bg-primary-600 transition-colors">
               Contact Support
             </Link>
-            <a href="mailto:support@trackpro.com"
+            <a href="mailto:support@crestech.co.tz"
               className="px-6 py-3 bg-white/5 text-gray-300 rounded-xl font-medium hover:bg-white/10 transition-colors">
               Email Us
             </a>

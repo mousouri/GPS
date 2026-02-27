@@ -52,11 +52,30 @@ export default function RegisterPage() {
     }
 
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    // Demo: auto-login as the demo user
-    await login('user@trackpro.com', 'user123');
-    setIsLoading(false);
-    navigate('/dashboard');
+    try {
+      const res = await fetch('http://localhost/gps-website/backend/register.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Registration failed');
+        setIsLoading(false);
+        return;
+      }
+      // Auto-login after registration
+      const loginSuccess = await login(email, password);
+      setIsLoading(false);
+      if (loginSuccess) {
+        navigate('/dashboard');
+      } else {
+        setError('Registration succeeded but login failed.');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -88,7 +107,7 @@ export default function RegisterPage() {
               <span className="gradient-text">in minutes</span>
             </h1>
             <p className="text-gray-400 text-lg max-w-md mb-12">
-              Join 10,000+ companies using TrackPro to monitor their fleet and assets in real time.
+              Join 10,000+ companies using CRESTECH to monitor their fleet and assets in real time.
             </p>
 
             <div className="space-y-5">

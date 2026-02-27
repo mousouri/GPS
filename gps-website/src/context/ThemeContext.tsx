@@ -12,7 +12,7 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('trackpro_theme');
+    const saved = localStorage.getItem('crestech_theme');
     return (saved as Theme) || 'dark';
   });
 
@@ -23,7 +23,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } else {
       root.classList.remove('light-theme');
     }
-    localStorage.setItem('trackpro_theme', theme);
+    localStorage.setItem('crestech_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));

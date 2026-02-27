@@ -150,7 +150,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-white/5 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} TrackPro GPS. All rights reserved.
+            &copy; {new Date().getFullYear()} CRESTECH. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm text-gray-500">
             <a href="#" className="hover:text-white transition-colors">Privacy</a>

@@ -22,14 +22,29 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
-    const success = await login(email, password);
-    setIsLoading(false);
-
-    if (success) {
-      navigate('/dashboard');
-    } else {
-      setError('Invalid email or password. Try: user@trackpro.com / user123');
+    try {
+      const res = await fetch('http://localhost/gps-website/backend/login.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Login failed');
+        setIsLoading(false);
+        return;
+      }
+      // Optionally, you can store user info in context/localStorage here
+      const success = await login(email, password); // still call context login for app state
+      setIsLoading(false);
+      if (success) {
+        navigate('/dashboard');
+      } else {
+        setError('Login succeeded on backend but failed in app.');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+      setIsLoading(false);
     }
   };
 
@@ -59,7 +74,7 @@ export default function LoginPage() {
             </Link>
             <h1 className="text-4xl font-bold mb-4">
               Welcome back to <br />
-              <span className="gradient-text">TrackPro GPS</span>
+              <span className="gradient-text">CRESTECH</span>
             </h1>
             <p className="text-gray-400 text-lg max-w-md">
               Monitor your fleet, track assets, and optimize operations from your personalized dashboard.
@@ -130,7 +145,7 @@ export default function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="user@trackpro.com"
+                  placeholder="user@crestech.co.tz"
                   required
                   className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
                 />
@@ -198,7 +213,7 @@ export default function LoginPage() {
 
           <div className="mt-6 p-4 rounded-xl bg-primary-500/5 border border-primary-500/10">
             <p className="text-xs text-gray-500 text-center">
-              <span className="text-primary-400 font-medium">Demo credentials:</span> user@trackpro.com / user123
+              <span className="text-primary-400 font-medium">Demo credentials:</span> user@crestech.co.tz / user123
             </p>
           </div>
 

@@ -23,7 +23,7 @@ const posts = [
   },
   {
     id: 2,
-    title: 'TrackPro 3.0: Real-time Analytics Dashboard',
+    title: 'CRESTECH 3.0: Real-time Analytics Dashboard',
     excerpt: 'We\'re excited to announce the launch of our new analytics dashboard with real-time fleet insights, custom reports, and advanced filtering.',
     image: '/images/dashboard-analytics.jpg',
     category: 'Product Updates',
@@ -48,7 +48,7 @@ const posts = [
   {
     id: 4,
     title: 'How Acme Corp Reduced Fuel Costs by 32%',
-    excerpt: 'A deep dive into how Acme Corporation leveraged TrackPro\'s analytics to dramatically cut their fleet fuel expenses in just 6 months.',
+    excerpt: 'A deep dive into how Acme Corporation leveraged CRESTECH\'s analytics to dramatically cut their fleet fuel expenses in just 6 months.',
     image: '/images/tech-network.jpg',
     category: 'Case Studies',
     author: 'Rob Taylor',
@@ -71,7 +71,7 @@ const posts = [
   },
   {
     id: 6,
-    title: 'TrackPro Expands to European Markets',
+    title: 'CRESTECH Expands to European Markets',
     excerpt: 'We\'re thrilled to announce our expansion into the European market, bringing advanced GPS tracking solutions to businesses across the EU.',
     image: '/images/city-night.jpg',
     category: 'Company',
@@ -113,7 +113,7 @@ export default function BlogPage() {
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="text-gray-400 max-w-xl mx-auto mb-8">
-            Stay up to date with the latest in fleet management, GPS technology, and TrackPro product updates.
+            Stay up to date with the latest in fleet management, GPS technology, and CRESTECH product updates.
           </motion.p>
 
           {/* Search */}

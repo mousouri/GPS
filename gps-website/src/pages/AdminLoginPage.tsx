@@ -29,7 +29,7 @@ export default function AdminLoginPage() {
     if (success) {
       navigate('/admin/dashboard');
     } else {
-      setError('Invalid admin credentials. Try: admin@trackpro.com / admin123');
+      setError('Invalid admin credentials. Try: admin@crestech.co.tz / admin123');
     }
   };
 
@@ -146,7 +146,7 @@ export default function AdminLoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@trackpro.com"
+                  placeholder="admin@crestech.co.tz"
                   required
                   className="w-full pl-12 pr-4 py-3.5 glass rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
                 />
@@ -196,7 +196,7 @@ export default function AdminLoginPage() {
 
           <div className="mt-6 p-4 rounded-xl bg-red-500/5 border border-red-500/10">
             <p className="text-xs text-gray-500 text-center">
-              <span className="text-red-400 font-medium">Demo credentials:</span> admin@trackpro.com / admin123
+              <span className="text-red-400 font-medium">Demo credentials:</span> admin@crestech.co.tz / admin123
             </p>
           </div>
 
