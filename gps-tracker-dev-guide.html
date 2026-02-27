@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPS Tracking Website — Developer Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050a0f;
+    --surface: #0d1821;
+    --surface2: #132030;
+    --accent: #00e5ff;
+    --accent2: #ff6b35;
+    --accent3: #7fff6b;
+    --text: #c8d8e8;
+    --text-dim: #5a7a99;
+    --border: #1a3050;
+    --glow: 0 0 20px rgba(0,229,255,0.15);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HERO */
+  header {
+    padding: 5rem 0 3rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .ping {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    margin-right: 0.6rem;
+    animation: ping 2s infinite;
+    box-shadow: 0 0 10px var(--accent);
+  }
+  @keyframes ping {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+  .badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  h1 span {
+    color: var(--accent);
+    position: relative;
+  }
+  .subtitle {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    font-weight: 400;
+  }
+  .coords {
+    position: absolute;
+    right: 0;
+    top: 5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-align: right;
+    line-height: 2;
+    opacity: 0.5;
+  }
+
+  /* LAYER NAV */
+  .layer-nav {
+    display: flex;
+    gap: 0.5rem;
+    padding: 2rem 0;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .layer-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: default;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .layer-pill:hover { border-color: var(--accent); color: var(--accent); }
+  .layer-pill.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  /* SECTIONS */
+  .section {
+    padding: 4rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    background: rgba(0,229,255,0.07);
+    border: 1px solid rgba(0,229,255,0.2);
+    padding: 0.3rem 0.6rem;
+    border-radius: 2px;
+    margin-top: 0.4rem;
+    white-space: nowrap;
+  }
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+  h2 .tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent2);
+    font-family: 'Space Mono', monospace;
+    display: block;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  /* CARDS GRID */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .card {
+    background: var(--surface);
+    padding: 1.5rem;
+    transition: background 0.2s;
+  }
+  .card:hover { background: var(--surface2); }
+  .card-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card-title .icon {
+    font-size: 1rem;
+  }
+  .card p {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .card .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.8rem;
+  }
+  .tech-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+  .tech-tag.green { background: rgba(127,255,107,0.1); color: var(--accent3); border: 1px solid rgba(127,255,107,0.2); }
+  .tech-tag.blue { background: rgba(0,229,255,0.08); color: var(--accent); border: 1px solid rgba(0,229,255,0.2); }
+  .tech-tag.orange { background: rgba(255,107,53,0.1); color: var(--accent2); border: 1px solid rgba(255,107,53,0.2); }
+
+  /* STACK TABLE */
+  .stack-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .stack-table th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .stack-table td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text);
+  }
+  .stack-table tr:hover td { background: var(--surface2); }
+  .stack-table .layer-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .stack-table .choice {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .stack-table .alt {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
+  }
+
+  /* ARCH DIAGRAM */
+  .arch {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    overflow-x: auto;
+  }
+  .arch-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+    flex-wrap: wrap;
+  }
+  .arch-box {
+    padding: 0.4rem 0.9rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+  }
+  .arch-box.device { background: rgba(127,255,107,0.1); border: 1px solid var(--accent3); color: var(--accent3); }
+  .arch-box.server { background: rgba(0,229,255,0.08); border: 1px solid var(--accent); color: var(--accent); }
+  .arch-box.db { background: rgba(255,107,53,0.1); border: 1px solid var(--accent2); color: var(--accent2); }
+  .arch-box.ui { background: rgba(180,100,255,0.1); border: 1px solid #b464ff; color: #b464ff; }
+  .arch-arrow { color: var(--text-dim); font-size: 0.9rem; }
+
+  /* CHECKLIST */
+  .checklist {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.5rem;
+  }
+  .checklist li {
+    font-size: 0.82rem;
+    color: var(--text);
+    padding: 0.6rem 0.9rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    transition: border-color 0.2s;
+  }
+  .checklist li:hover { border-left-color: var(--accent2); }
+  .checklist li::before {
+    content: '◇';
+    color: var(--accent);
+    font-size: 0.7rem;
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+  }
+
+  /* WARNING CALLOUT */
+  .callout {
+    padding: 1.2rem 1.5rem;
+    border-left: 3px solid;
+    margin: 1.5rem 0;
+    font-size: 0.85rem;
+  }
+  .callout.warn { border-color: var(--accent2); background: rgba(255,107,53,0.07); }
+  .callout.info { border-color: var(--accent); background: rgba(0,229,255,0.05); }
+  .callout strong { display: block; margin-bottom: 0.3rem; font-size: 0.75rem; font-family: 'Space Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+  .callout.warn strong { color: var(--accent2); }
+  .callout.info strong { color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    padding: 3rem 0;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .section { animation: fadeUp 0.5s ease both; }
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="coords">
+      LAT: -6.7924°<br>
+      LNG: 39.2083°<br>
+      ALT: 55m<br>
+      SIGNAL: ACTIVE
+    </div>
+    <div class="badge"><span class="ping"></span>Developer Blueprint — GPS Tracking Platform</div>
+    <h1>Build a <span>GPS Tracking</span><br>Website — Complete Guide</h1>
+    <p class="subtitle">Every component, layer, and consideration a software developer needs to architect a production-ready GPS tracking platform.</p>
+  </header>
+
+  <nav class="layer-nav">
+    <div class="layer-pill active">Full Stack</div>
+    <div class="layer-pill">Frontend</div>
+    <div class="layer-pill">Backend</div>
+    <div class="layer-pill">Database</div>
+    <div class="layer-pill">Real-Time</div>
+    <div class="layer-pill">Security</div>
+    <div class="layer-pill">DevOps</div>
+    <div class="layer-pill">Mobile</div>
+  </nav>
+
+  <!-- 01 ARCHITECTURE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <h2><span class="tag">Foundation</span>System Architecture</h2>
+    </div>
+    <div class="arch">
+      <div style="color: var(--text-dim); font-size:0.65rem; margin-bottom:1rem; letter-spacing:0.1em;">DATA FLOW OVERVIEW</div>
+      <div class="arch-row">
+        <div class="arch-box device">📱 Mobile App (GPS)</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box device">🔧 IoT Hardware Tracker</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box device">🌐 Browser Geolocation</div>
+      </div>
+      <div class="arch-row" style="margin: 0.2rem 0 0.2rem 1rem;">
+        <div class="arch-arrow">↓ HTTPS / MQTT / WebSocket / TCP</div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-box server">⚙️ API Gateway / Load Balancer</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box server">🔄 Location Ingestion Service</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box server">📡 MQTT / WebSocket Broker</div>
+      </div>
+      <div class="arch-row" style="margin: 0.2rem 0 0.2rem 1rem;">
+        <div class="arch-arrow">↓</div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-box db">🗄️ PostGIS / TimescaleDB</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box db">⚡ Redis (live positions cache)</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box db">📦 Message Queue (Kafka/RabbitMQ)</div>
+      </div>
+      <div class="arch-row" style="margin: 0.2rem 0 0.2rem 1rem;">
+        <div class="arch-arrow">↓</div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-box ui">🖥️ React Dashboard</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box ui">🗺️ Map (Mapbox / Leaflet)</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box ui">🔔 Alert / Notification System</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 FRONTEND -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <h2><span class="tag">UI Layer</span>Frontend — What to Build</h2>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title"><span class="icon">🗺️</span> Live Map View</div>
+        <p>Real-time map with moving markers for each tracked asset. Smooth marker interpolation, custom icons per asset type, clustering for many assets.</p>
+        <div class="tech-tags">
+          <span class="tech-tag blue">Mapbox GL JS</span>
+          <span class="tech-tag blue">Leaflet.js</span>
+          <span class="tech-tag blue">Google Maps API</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📍</span> Trip History & Playback</div>
+        <p>Polyline route rendering with timestamps. Scrubable timeline to replay trips. Speed heatmap overlay along routes.</p>
+        <div class="tech-tags">
+          <span class="tech-tag green">Chart.js</span>
+          <span class="tech-tag green">Recharts</span>
+          <span class="tech-tag blue">Turf.js</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📊</span> Analytics Dashboard</div>
+        <p>Distance traveled, idle time, speed stats, geofence events, fuel usage (if hardware supports it). Summary cards + charts.</p>
+        <div class="tech-tags">
+          <span class="tech-tag green">Recharts</span>
+          <span class="tech-tag green">ApexCharts</span>
+          <span class="tech-tag orange">D3.js</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔷</span> Geofence Manager</div>
+        <p>Draw polygons, circles, or rectangles on map. Save named zones. Set entry/exit alert rules per asset per zone.</p>
+        <div class="tech-tags">
+          <span class="tech-tag blue">Mapbox Draw</span>
+          <span class="tech-tag blue">Leaflet Draw</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🚗</span> Asset Management</div>
+        <p>List of vehicles/people/devices. CRUD interface. Assign trackers, set labels, group assets, upload photos.</p>
+        <div class="tech-tags">
+          <span class="tech-tag orange">React Table</span>
+          <span class="tech-tag orange">TanStack Query</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔔</span> Alert Center</div>
+        <p>Real-time notifications for speeding, geofence breach, SOS, device offline, low battery. In-app + email + SMS.</p>
+        <div class="tech-tags">
+          <span class="tech-tag blue">WebSockets</span>
+          <span class="tech-tag green">Twilio</span>
+          <span class="tech-tag green">Firebase FCM</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">👥</span> User & Role Management</div>
+        <p>Multi-tenant support. Admins, operators, viewers. Org hierarchy. Assign which assets each user can see.</p>
+        <div class="tech-tags">
+          <span class="tech-tag orange">RBAC</span>
+          <span class="tech-tag orange">JWT</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📄</span> Reports</div>
+        <p>Schedulable PDF/CSV reports — daily mileage, trips per asset, geofence activity, driver behavior score.</p>
+        <div class="tech-tags">
+          <span class="tech-tag green">React PDF</span>
+          <span class="tech-tag blue">PapaParse</span>
+          <span class="tech-tag orange">jsPDF</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📱</span> Responsive / PWA</div>
+        <p>Mobile-friendly layout. Progressive Web App for offline support and push notifications without a native app.</p>
+        <div class="tech-tags">
+          <span class="tech-tag blue">Service Workers</span>
+          <span class="tech-tag blue">Vite PWA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 BACKEND -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <h2><span class="tag">Server Layer</span>Backend Services</h2>
+    </div>
+    <table class="stack-table">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Responsibility</th>
+          <th>Recommended</th>
+          <th>Alternatives</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="layer-label">INGESTION</span></td>
+          <td style="font-size:0.8rem;">Receive raw GPS packets (lat, lng, speed, heading, timestamp, device ID) via HTTP or MQTT</td>
+          <td><div class="choice">Node.js + Fastify</div><div class="alt">High throughput, async I/O</div></td>
+          <td style="font-size:0.78rem; color:var(--text-dim)">Go, Python FastAPI</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">REAL-TIME</span></td>
+          <td style="font-size:0.8rem;">Push live position updates to connected browsers instantly</td>
+          <td><div class="choice">Socket.io / native WS</div><div class="alt">Rooms per asset</div></td>
+          <td style="font-size:0.78rem; color:var(--text-dim)">Server-Sent Events, MQTT over WS</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">MQTT BROKER</span></td>
+          <td style="font-size:0.8rem;">Lightweight protocol for IoT hardware trackers (low bandwidth, QoS levels)</td>
+          <td><div class="choice">Mosquitto / EMQX</div><div class="alt">EMQX for scale</div></td>
+          <td style="font-size:0.78rem; color:var(--text-dim)">HiveMQ, VerneMQ</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">API GATEWAY</span></td>
+          <td style="font-size:0.8rem;">Rate limiting, auth validation, routing to microservices</td>
+          <td><div class="choice">Kong / Nginx</div></td>
+          <td style="font-size:0.78rem; color:var(--text-dim)">AWS API Gateway, Traefik</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">GEO PROCESSING</span></td>
+          <td style="font-size:0.8rem;">Geofence intersection checks, reverse geocoding, route snapping</td>
+          <td><div class="choice">PostGIS functions</div><div class="alt">Turf.js for server-side</div></td>
+          <td style="font-size:0.78rem; color:var(--text-dim)">H3 (Uber), S2 Geometry</div></td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">ALERT ENGINE</span></td>
+          <td style="font-size:0.8rem;">Rule evaluation (speed > X, entered zone Y), trigger notifications</td>
+          <td><div class="choice">Node.js worker + Redis pub/sub</div></td>
+          <td style="font-size:0.78rem; color:var(--text-dim)">Bull queue, Temporal.io</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">NOTIFICATIONS</span></td>
+          <td style="font-size:0.8rem;">Email, SMS, push — triggered by alert engine</td>
+          <td><div class="choice">SendGrid + Twilio</div></td>
+          <td style="font-size:0.78rem; color:var(--text-dim)">AWS SES/SNS, Resend</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">AUTH</span></td>
+          <td style="font-size:0.8rem;">JWT-based auth, refresh tokens, OAuth2 (Google login), device API keys</td>
+          <td><div class="choice">Passport.js / Auth0</div></td>
+          <td style="font-size:0.78rem; color:var(--text-dim)">Clerk, Supabase Auth, Keycloak</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 04 DATABASE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <h2><span class="tag">Data Layer</span>Database Design</h2>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title"><span class="icon">📌</span> Location History Table</div>
+        <p>Core table: device_id, latitude, longitude, altitude, speed, heading, accuracy, recorded_at. Partitioned by time. Indexed on device_id + recorded_at.</p>
+        <div class="tech-tags">
+          <span class="tech-tag blue">TimescaleDB</span>
+          <span class="tech-tag blue">PostGIS GEOMETRY</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">⚡</span> Live Position Cache</div>
+        <p>Store ONLY the latest position per device in Redis. Key: <code style="font-size:0.75rem; color:var(--accent)">pos:{device_id}</code>. Expire after inactivity. Read by the live map.</p>
+        <div class="tech-tags">
+          <span class="tech-tag orange">Redis Hash</span>
+          <span class="tech-tag orange">TTL expiry</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔷</span> Geofence Storage</div>
+        <p>Store zones as PostGIS POLYGON or GEOMETRY types. Use ST_Contains() or ST_Intersects() for efficient server-side intersection queries.</p>
+        <div class="tech-tags">
+          <span class="tech-tag blue">ST_Contains</span>
+          <span class="tech-tag blue">GeoJSON</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🚗</span> Trip Detection</div>
+        <p>Auto-segment continuous location points into trips based on ignition events or idle gap thresholds. Store start/end, duration, distance per trip.</p>
+        <div class="tech-tags">
+          <span class="tech-tag green">Batch Job</span>
+          <span class="tech-tag green">Cron</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📦</span> Data Retention Policy</div>
+        <p>Define how long raw location points are kept. Compress old data by downsampling (e.g., keep 1 point/minute after 90 days). Use TimescaleDB compression chunks.</p>
+        <div class="tech-tags">
+          <span class="tech-tag orange">TimescaleDB Compression</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">👥</span> Multi-Tenant Schema</div>
+        <p>Org → Users → Devices → Assets hierarchy. Row-level security (RLS) in PostgreSQL to enforce tenant isolation at DB level.</p>
+        <div class="tech-tags">
+          <span class="tech-tag blue">RLS Policies</span>
+          <span class="tech-tag blue">Schema-per-tenant</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 SECURITY -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <h2><span class="tag">Critical</span>Security & Privacy</h2>
+    </div>
+    <div class="callout warn">
+      <strong>⚠ Legal Warning</strong>
+      GPS tracking without informed consent is illegal in most jurisdictions. Always implement explicit consent flows and data processing agreements. Consult a lawyer for GDPR / CCPA compliance.
+    </div>
+    <ul class="checklist">
+      <li>TLS/HTTPS for all connections — no exceptions</li>
+      <li>MQTT over TLS (port 8883) for hardware trackers</li>
+      <li>JWT access tokens (short-lived) + refresh tokens</li>
+      <li>Device API keys for hardware auth (hashed in DB)</li>
+      <li>Rate limiting on ingestion endpoints</li>
+      <li>Role-Based Access Control (RBAC) — enforce at API level</li>
+      <li>Row-Level Security in PostgreSQL per tenant</li>
+      <li>Encrypt location data at rest (AES-256)</li>
+      <li>GDPR: data export, deletion, consent tracking</li>
+      <li>Audit log for all data access events</li>
+      <li>Input validation and sanitization on all endpoints</li>
+      <li>CORS policy — restrict allowed origins</li>
+      <li>Webhook signature verification</li>
+      <li>PII masking in logs</li>
+      <li>Geofence data is sensitive — access-control it too</li>
+      <li>Allow users to see who can access their location</li>
+    </ul>
+  </div>
+
+  <!-- 06 HARDWARE PROTOCOLS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <h2><span class="tag">IoT Integration</span>Hardware Tracker Protocols</h2>
+    </div>
+    <div class="callout info">
+      <strong>ℹ Note</strong>
+      Real GPS trackers don't use a browser — they send raw TCP/UDP packets or use MQTT. Your backend must decode these proprietary protocols.
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title"><span class="icon">📡</span> MQTT</div>
+        <p>Lightweight pub/sub protocol. Ideal for battery-powered trackers. Device publishes to topic <code style="font-size:0.75rem; color:var(--accent)">gps/{device_id}/location</code>. Your server subscribes and writes to DB.</p>
+        <div class="tech-tags"><span class="tech-tag blue">EMQX</span><span class="tech-tag blue">Mosquitto</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔌</span> TCP/UDP Raw Sockets</div>
+        <p>Cheap GPS modules (like Concox, Teltonika) send binary packets over TCP. You must implement a protocol parser for each device model.</p>
+        <div class="tech-tags"><span class="tech-tag orange">Node.js net module</span><span class="tech-tag orange">Go TCP server</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🌐</span> HTTP Webhooks</div>
+        <p>Some trackers (like Traccar-compatible devices) POST NMEA sentences or JSON to your API. Simplest to implement but higher overhead.</p>
+        <div class="tech-tags"><span class="tech-tag green">REST POST</span><span class="tech-tag green">NMEA parsing</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🛠️</span> Traccar (Open Source)</div>
+        <p>Pre-built server that handles 200+ GPS device protocols. You can run it yourself and pipe data to your own DB, saving months of protocol work.</p>
+        <div class="tech-tags"><span class="tech-tag green">Self-hosted</span><span class="tech-tag green">Docker</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 DEVOPS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <h2><span class="tag">Infrastructure</span>DevOps & Deployment</h2>
+    </div>
+    <ul class="checklist">
+      <li>Containerize everything with Docker + Docker Compose</li>
+      <li>Kubernetes for production scale (pods per service)</li>
+      <li>CI/CD pipeline — GitHub Actions or GitLab CI</li>
+      <li>Blue/green or rolling deployments (zero downtime)</li>
+      <li>Horizontal scaling for ingestion service (stateless)</li>
+      <li>Sticky sessions or Redis adapter for WebSocket scaling</li>
+      <li>CDN for frontend assets (Cloudflare, AWS CloudFront)</li>
+      <li>Map tile caching to reduce Mapbox/Google API costs</li>
+      <li>Database read replicas for analytics queries</li>
+      <li>Automated database backups + point-in-time recovery</li>
+      <li>Centralized logging (ELK stack or Loki + Grafana)</li>
+      <li>APM / tracing (Datadog, Sentry, OpenTelemetry)</li>
+      <li>Uptime monitoring with PagerDuty alerts</li>
+      <li>Load testing before launch (k6, Locust)</li>
+      <li>VPC + private subnets for DB and internal services</li>
+      <li>Secrets management (HashiCorp Vault or AWS Secrets Manager)</li>
+    </ul>
+  </div>
+
+  <!-- 08 MOBILE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <h2><span class="tag">Client</span>Mobile App (Tracker Side)</h2>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title"><span class="icon">⚡</span> Background Location</div>
+        <p>Use Android Foreground Service or iOS significant location changes. Standard background location kills battery. Adaptive intervals based on movement detection.</p>
+        <div class="tech-tags"><span class="tech-tag orange">React Native</span><span class="tech-tag orange">Flutter</span><span class="tech-tag orange">Native</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">📶</span> Offline Queue</div>
+        <p>Buffer location points locally (SQLite) when offline. Batch-sync to server when connection restored. Use exponential backoff for retries.</p>
+        <div class="tech-tags"><span class="tech-tag blue">SQLite</span><span class="tech-tag blue">WorkManager (Android)</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔋</span> Battery Optimization</div>
+        <p>Fused Location Provider (Android) for best accuracy/battery tradeoff. Reduce polling when stationary (accelerometer fusion). GPS vs Network vs Cell tower accuracy levels.</p>
+        <div class="tech-tags"><span class="tech-tag green">Fused Location API</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon">🔒</span> Permissions UX</div>
+        <p>"Always on" location permission is hard to get approved. Design clear onboarding explaining why it's needed. Handle permission denial gracefully.</p>
+        <div class="tech-tags"><span class="tech-tag orange">App Store Guidelines</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 09 COST -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">09</div>
+      <h2><span class="tag">Planning</span>Cost Considerations</h2>
+    </div>
+    <table class="stack-table">
+      <thead>
+        <tr><th>Component</th><th>Free/Cheap Option</th><th>Paid/Scale Option</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="layer-label">MAP TILES</span></td>
+          <td>OpenStreetMap + Leaflet (free)</td>
+          <td>Mapbox (~$5/1000 loads), Google Maps</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">REVERSE GEOCODING</span></td>
+          <td>Nominatim (self-hosted OSM)</td>
+          <td>Google Geocoding API, Mapbox API</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">DATABASE</span></td>
+          <td>Self-hosted PostgreSQL + PostGIS</td>
+          <td>Neon, Supabase, AWS RDS, TimescaleDB Cloud</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">SMS ALERTS</span></td>
+          <td>Email only (free)</td>
+          <td>Twilio (~$0.0075/SMS)</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">HOSTING</span></td>
+          <td>Railway, Render, Fly.io</td>
+          <td>AWS, GCP, Azure — EC2, ECS, GKE</td>
+        </tr>
+        <tr>
+          <td><span class="layer-label">MQTT BROKER</span></td>
+          <td>Mosquitto (self-hosted, free)</td>
+          <td>EMQX Cloud, HiveMQ Cloud</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    GPS TRACKING PLATFORM BLUEPRINT &nbsp;·&nbsp; BUILT FOR SOFTWARE DEVELOPERS &nbsp;·&nbsp; SIGNAL STRONG
+  </footer>
+</div>
+
+</body>
+</html>
