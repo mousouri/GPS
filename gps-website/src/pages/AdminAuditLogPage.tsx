@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 const auditEntries = [
-  { id: 1, admin: 'John Admin', action: 'User Suspended', target: 'user@example.com', category: 'user', severity: 'high', timestamp: '2024-12-21 14:32:05', ip: '192.168.1.45', details: 'Suspended user account for policy violation' },
+  { id: 1, admin: 'John Admin', action: 'User Suspended', target: 'user@crestech.co.tz', category: 'user', severity: 'high', timestamp: '2024-12-21 14:32:05', ip: '192.168.1.45', details: 'Suspended user account for policy violation' },
   { id: 2, admin: 'System', action: 'Auto-Backup Completed', target: 'Database', category: 'system', severity: 'info', timestamp: '2024-12-21 14:00:00', ip: 'Internal', details: 'Scheduled daily backup completed successfully' },
   { id: 3, admin: 'Jane Admin', action: 'Plan Changed', target: 'acme@corp.com', category: 'billing', severity: 'medium', timestamp: '2024-12-21 13:15:22', ip: '10.0.0.12', details: 'Changed plan from Professional to Enterprise' },
   { id: 4, admin: 'John Admin', action: 'Admin Login', target: 'admin@crestech.co.tz', category: 'auth', severity: 'info', timestamp: '2024-12-21 12:45:00', ip: '192.168.1.45', details: 'Successful admin login' },

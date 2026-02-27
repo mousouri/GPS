@@ -77,8 +77,8 @@ export default function AboutPage() {
               <span className="gradient-text">Are</span>
             </h1>
             <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-              TrackPro GPS is a global leader in GPS tracking and fleet management solutions.
-              We empower businesses with real-time location intelligence.
+              CRESTECH is a leading provider of GPS tracking and IoT solutions in Tanzania. Simple, Reliable, Local.
+              We empower Tanzanian businesses with real-time location intelligence and local support.
             </p>
           </motion.div>
         </div>
@@ -109,7 +109,7 @@ export default function AboutPage() {
                 <span className="gradient-text">Story</span>
               </h2>
               <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                Founded in 2015, TrackPro GPS started with a simple mission: make GPS tracking 
+                Founded in 2015, CRESTECH started with a simple mission: make GPS tracking 
                 accessible, accurate, and affordable for everyone. What began as a small startup 
                 in Silicon Valley has grown into a global platform serving thousands of businesses 
                 across 120+ countries.
@@ -157,7 +157,7 @@ export default function AboutPage() {
                   <h3 className="text-xl font-bold">Our Mission</h3>
                 </div>
                 <p className="text-gray-400 leading-relaxed">
-                  To provide the most reliable, accurate, and accessible GPS tracking solutions 
+                  To provide the most reliable, accurate, and accessible GPS tracking solutions for Tanzania and East Africa. 
                   that help businesses optimize operations, protect assets, and ensure safety — 
                   all while delivering an exceptional user experience.
                 </p>
@@ -184,7 +184,7 @@ export default function AboutPage() {
                   <h3 className="text-xl font-bold">Our Vision</h3>
                 </div>
                 <p className="text-gray-400 leading-relaxed">
-                  To become the world's most trusted GPS platform, connecting every vehicle, 
+                  To become Tanzania's most trusted GPS platform, connecting every vehicle, 
                   asset, and person to a smarter, safer network powered by AI and satellite 
                   technology.
                 </p>
@@ -240,7 +240,7 @@ export default function AboutPage() {
               <span className="gradient-text">Team</span>
             </h2>
             <p className="text-gray-400 text-lg max-w-xl mx-auto">
-              The brilliant minds behind TrackPro GPS.
+              The brilliant minds behind CRESTECH.
             </p>
           </motion.div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -322,7 +322,7 @@ export default function AboutPage() {
           >
             <img
               src="/images/modern-office.jpg"
-              alt="TrackPro Office"
+              alt="CRESTECH Office"
               className="w-full h-[400px] object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-dark-950/80 via-dark-950/20 to-transparent" />

@@ -48,6 +48,7 @@ export default function About() {
           </h2>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
             CRESTECH is a leading provider of GPS tracking and IoT solutions in Tanzania. Simple, Reliable, Local.
+            <span className="block mt-2 text-lg text-green-400 font-semibold">Empowering Tanzania with Smart Tracking Solutions.</span>
             We empower businesses and individuals with real-time location intelligence 
             powered by cutting-edge satellite technology.
           </p>

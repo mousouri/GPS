@@ -19,12 +19,12 @@ const platformStats = [
 ];
 
 const recentUsers = [
-  { id: 1, name: 'Anderson Logistics', email: 'contact@anderson.com', plan: 'Enterprise', devices: 156, status: 'active', revenue: '$4,200/mo', joinDate: 'Feb 15, 2026', avatar: '/images/person-businessman.jpg' },
-  { id: 2, name: 'Swift Transport', email: 'info@swift.com', plan: 'Professional', devices: 48, status: 'active', revenue: '$1,800/mo', joinDate: 'Feb 12, 2026', avatar: '/images/person-man-1.jpg' },
-  { id: 3, name: 'Metro Delivery Co.', email: 'ops@metro.com', plan: 'Starter', devices: 12, status: 'trial', revenue: '$0 (trial)', joinDate: 'Feb 20, 2026', avatar: '/images/person-businessman-2.jpg' },
-  { id: 4, name: 'Pacific Fleet Inc.', email: 'fleet@pacific.com', plan: 'Enterprise', devices: 230, status: 'active', revenue: '$6,500/mo', joinDate: 'Jan 08, 2026', avatar: '/images/person-man-2.jpg' },
-  { id: 5, name: 'City Cab Services', email: 'admin@citycab.com', plan: 'Professional', devices: 75, status: 'past_due', revenue: '$2,100/mo', joinDate: 'Dec 03, 2025', avatar: '/images/person-man-3.jpg' },
-  { id: 6, name: 'Global Marine Ltd.', email: 'ops@globalmarine.com', plan: 'Enterprise', devices: 89, status: 'active', revenue: '$3,800/mo', joinDate: 'Feb 22, 2026', avatar: '/images/person-woman-6.jpg' },
+  { id: 1, name: 'Anderson Logistics', email: 'contact@crestech.co.tz', plan: 'Enterprise', devices: 156, status: 'active', revenue: '$4,200/mo', joinDate: 'Feb 15, 2026', avatar: '/images/person-businessman.jpg' },
+  { id: 2, name: 'Swift Transport', email: 'info@crestech.co.tz', plan: 'Professional', devices: 48, status: 'active', revenue: '$1,800/mo', joinDate: 'Feb 12, 2026', avatar: '/images/person-man-1.jpg' },
+  { id: 3, name: 'Metro Delivery Co.', email: 'ops@crestech.co.tz', plan: 'Starter', devices: 12, status: 'trial', revenue: '$0 (trial)', joinDate: 'Feb 20, 2026', avatar: '/images/person-businessman-2.jpg' },
+  { id: 4, name: 'Pacific Fleet Inc.', email: 'fleet@crestech.co.tz', plan: 'Enterprise', devices: 230, status: 'active', revenue: '$6,500/mo', joinDate: 'Jan 08, 2026', avatar: '/images/person-man-2.jpg' },
+  { id: 5, name: 'City Cab Services', email: 'admin@crestech.co.tz', plan: 'Professional', devices: 75, status: 'past_due', revenue: '$2,100/mo', joinDate: 'Dec 03, 2025', avatar: '/images/person-man-3.jpg' },
+  { id: 6, name: 'Global Marine Ltd.', email: 'ops@crestech.co.tz', plan: 'Enterprise', devices: 89, status: 'active', revenue: '$3,800/mo', joinDate: 'Feb 22, 2026', avatar: '/images/person-woman-6.jpg' },
 ];
 
 const systemHealth = [
