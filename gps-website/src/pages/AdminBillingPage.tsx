@@ -18,8 +18,8 @@ const monthlyRevenue = [
 ];
 
 const planBreakdown = [
-  { plan: 'Enterprise', users: 142, revenue: 170580, percent: 60, color: '#3396ff' },
-  { plan: 'Professional', users: 489, revenue: 85410, percent: 30, color: '#17b364' },
+  { plan: 'Enterprise', users: 142, revenue: 170580, percent: 60, color: '#eab308' },
+  { plan: 'Professional', users: 489, revenue: 85410, percent: 30, color: '#f59e0b' },
   { plan: 'Starter', users: 1247, revenue: 28940, percent: 10, color: '#f59e0b' },
 ];
 
@@ -57,7 +57,7 @@ export default function AdminBillingPage() {
             <span className="font-semibold text-white">Billing & Revenue</span>
           </div>
         </div>
-        <button className="px-4 py-2 bg-primary-500 text-white rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors flex items-center gap-2">
+        <button className="px-4 py-2 bg-primary-500 text-dark-950 rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors flex items-center gap-2">
           <Download className="w-4 h-4" />
           Export Report
         </button>

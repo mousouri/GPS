@@ -19,17 +19,17 @@ const footerLinks = {
   ],
   Company: [
     { name: 'About Us', path: '/about' },
-    { name: 'Careers', path: '/' },
-    { name: 'Blog', path: '/' },
-    { name: 'Press', path: '/' },
-    { name: 'Partners', path: '/' },
+    { name: 'Careers', path: '/about' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'Testimonials', path: '/testimonials' },
+    { name: 'Partners', path: '/about' },
   ],
   Support: [
-    { name: 'Help Center', path: '/' },
+    { name: 'FAQ', path: '/faq' },
     { name: 'Contact Us', path: '/contact' },
-    { name: 'System Status', path: '/' },
-    { name: 'Privacy Policy', path: '/' },
-    { name: 'Terms of Service', path: '/' },
+    { name: 'System Status', path: '/contact' },
+    { name: 'Privacy Policy', path: '/faq' },
+    { name: 'Terms of Service', path: '/faq' },
   ],
 };
 
@@ -75,7 +75,7 @@ export default function Footer() {
                 <motion.span
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-block px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-2xl hover:shadow-lg hover:shadow-primary-500/25 transition-shadow"
+                  className="inline-block px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-2xl hover:shadow-lg hover:shadow-primary-500/25 transition-shadow"
                 >
                   Start Free Trial
                 </motion.span>

@@ -13,10 +13,10 @@ const posts = [
     id: 1,
     title: 'How AI is Revolutionizing Fleet Management in 2024',
     excerpt: 'Discover how artificial intelligence is transforming the way companies manage their vehicle fleets, from predictive maintenance to route optimization.',
-    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80',
+    image: '/images/robot-ai.jpg',
     category: 'Industry News',
     author: 'Sarah Mitchell',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80',
+    avatar: '/images/person-woman-4.jpg',
     date: 'Dec 20, 2024',
     readTime: '8 min read',
     featured: true,
@@ -25,10 +25,10 @@ const posts = [
     id: 2,
     title: 'TrackPro 3.0: Real-time Analytics Dashboard',
     excerpt: 'We\'re excited to announce the launch of our new analytics dashboard with real-time fleet insights, custom reports, and advanced filtering.',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
+    image: '/images/dashboard-analytics.jpg',
     category: 'Product Updates',
     author: 'Mike Johnson',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80',
+    avatar: '/images/person-man-1.jpg',
     date: 'Dec 18, 2024',
     readTime: '5 min read',
     featured: false,
@@ -37,10 +37,10 @@ const posts = [
     id: 3,
     title: 'Setting Up Geofences: A Complete Guide',
     excerpt: 'Learn how to create, manage, and optimize geofence zones to improve fleet security and operational efficiency with our step-by-step tutorial.',
-    image: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=800&q=80',
+    image: '/images/city-map.jpg',
     category: 'Tutorials',
     author: 'Emily Chen',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80',
+    avatar: '/images/person-woman-5.jpg',
     date: 'Dec 15, 2024',
     readTime: '12 min read',
     featured: false,
@@ -49,10 +49,10 @@ const posts = [
     id: 4,
     title: 'How Acme Corp Reduced Fuel Costs by 32%',
     excerpt: 'A deep dive into how Acme Corporation leveraged TrackPro\'s analytics to dramatically cut their fleet fuel expenses in just 6 months.',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80',
+    image: '/images/tech-network.jpg',
     category: 'Case Studies',
     author: 'Rob Taylor',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80',
+    avatar: '/images/person-man-2.jpg',
     date: 'Dec 12, 2024',
     readTime: '10 min read',
     featured: false,
@@ -64,7 +64,7 @@ const posts = [
     image: 'https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=800&q=80',
     category: 'Industry News',
     author: 'Lisa Park',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80',
+    avatar: '/images/person-woman-2.jpg',
     date: 'Dec 10, 2024',
     readTime: '7 min read',
     featured: false,
@@ -73,10 +73,10 @@ const posts = [
     id: 6,
     title: 'TrackPro Expands to European Markets',
     excerpt: 'We\'re thrilled to announce our expansion into the European market, bringing advanced GPS tracking solutions to businesses across the EU.',
-    image: 'https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=800&q=80',
+    image: '/images/city-night.jpg',
     category: 'Company',
     author: 'David Kim',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80',
+    avatar: '/images/person-man-3.jpg',
     date: 'Dec 8, 2024',
     readTime: '4 min read',
     featured: false,
@@ -135,7 +135,7 @@ export default function BlogPage() {
             <button key={cat} onClick={() => setActiveCategory(cat)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 activeCategory === cat
-                  ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
+                  ? 'bg-primary-500 text-dark-950 shadow-lg shadow-primary-500/25'
                   : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
               }`}>
               {cat}
@@ -156,7 +156,7 @@ export default function BlogPage() {
                 <img src={featured.image} alt={featured.title}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1 bg-primary-500 text-white text-xs font-medium rounded-full">Featured</span>
+                  <span className="px-3 py-1 bg-primary-500 text-dark-950 text-xs font-medium rounded-full">Featured</span>
                 </div>
               </div>
               <div className="p-8 flex flex-col justify-center">
@@ -234,7 +234,7 @@ export default function BlogPage() {
           <button className="p-2 glass rounded-xl hover:bg-white/10 transition-colors">
             <ChevronLeft className="w-4 h-4 text-gray-400" />
           </button>
-          <button className="px-4 py-2 bg-primary-500 text-white rounded-xl text-sm font-medium">1</button>
+          <button className="px-4 py-2 bg-primary-500 text-dark-950 rounded-xl text-sm font-medium">1</button>
           <button className="px-4 py-2 glass rounded-xl text-sm text-gray-400 hover:bg-white/10 transition-colors">2</button>
           <button className="px-4 py-2 glass rounded-xl text-sm text-gray-400 hover:bg-white/10 transition-colors">3</button>
           <button className="p-2 glass rounded-xl hover:bg-white/10 transition-colors">

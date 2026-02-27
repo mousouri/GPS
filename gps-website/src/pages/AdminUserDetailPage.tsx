@@ -18,7 +18,7 @@ const userData = {
   status: 'active',
   joinDate: 'March 15, 2023',
   lastLogin: '2 hours ago',
-  avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
+  avatar: '/images/person-woman-4.jpg',
   devices: 24,
   monthlySpend: '$1,896',
   totalSpent: '$22,752',
@@ -123,7 +123,7 @@ export default function AdminUserDetailPage() {
           {(['overview', 'devices', 'billing', 'activity'] as const).map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
-                activeTab === tab ? 'bg-primary-500 text-white' : 'text-gray-400 hover:text-white'
+                activeTab === tab ? 'bg-primary-500 text-dark-950' : 'text-gray-400 hover:text-white'
               }`}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -261,9 +261,9 @@ export default function AdminUserDetailPage() {
               {activity.map((a, i) => (
                 <div key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                    a.type === 'auth' ? 'bg-blue-500/10' : a.type === 'security' ? 'bg-red-500/10' : 'bg-primary-500/10'
+                    a.type === 'auth' ? 'bg-primary-500/10' : a.type === 'security' ? 'bg-red-500/10' : 'bg-primary-500/10'
                   }`}>
-                    {a.type === 'auth' ? <User className="w-4 h-4 text-blue-400" /> :
+                    {a.type === 'auth' ? <User className="w-4 h-4 text-primary-400" /> :
                      a.type === 'security' ? <Shield className="w-4 h-4 text-red-400" /> :
                      a.type === 'edit' ? <Edit3 className="w-4 h-4 text-primary-400" /> :
                      <BarChart3 className="w-4 h-4 text-primary-400" />}

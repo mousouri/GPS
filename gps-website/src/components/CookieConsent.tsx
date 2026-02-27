@@ -75,7 +75,7 @@ export default function CookieConsent() {
                 </div>
                 <div className="flex flex-wrap items-center gap-3 mt-4 ml-14">
                   <button onClick={acceptAll}
-                    className="px-5 py-2.5 bg-primary-500 text-white rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors">
+                    className="px-5 py-2.5 bg-primary-500 text-dark-950 rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors">
                     Accept All
                   </button>
                   <button onClick={rejectAll}
@@ -134,7 +134,7 @@ export default function CookieConsent() {
                 </div>
                 <div className="flex gap-3">
                   <button onClick={savePrefs}
-                    className="flex-1 px-5 py-2.5 bg-primary-500 text-white rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors">
+                    className="flex-1 px-5 py-2.5 bg-primary-500 text-dark-950 rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors">
                     Save Preferences
                   </button>
                   <button onClick={acceptAll}

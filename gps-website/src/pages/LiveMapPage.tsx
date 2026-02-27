@@ -113,7 +113,7 @@ export default function LiveMapPage() {
         {/* Map Area */}
         <div className="flex-1 relative overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1600&q=80"
+            src="/images/map-aerial.jpg"
             alt="Map"
             className="absolute inset-0 w-full h-full object-cover opacity-50"
           />

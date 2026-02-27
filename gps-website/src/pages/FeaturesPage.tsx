@@ -11,84 +11,84 @@ const features = [
     icon: MapPin,
     title: 'Real-Time Tracking',
     description: 'Track your vehicles, assets, and personnel in real-time with updates every 5 seconds on an interactive map.',
-    image: 'https://images.unsplash.com/photo-1548345680-f5475ea5df84?w=500&h=300&fit=crop',
+    image: '/images/gps-tracking.jpg',
     color: 'from-primary-500 to-primary-600',
   },
   {
     icon: Route,
     title: 'Route History',
     description: 'Access complete route history with playback. Analyze routes taken and optimize for better efficiency.',
-    image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=500&h=300&fit=crop',
+    image: '/images/surveillance-camera.jpg',
     color: 'from-accent-500 to-accent-600',
   },
   {
     icon: Bell,
     title: 'Smart Alerts',
     description: 'Set up geofence alerts, speed warnings, and custom notifications delivered instantly to your device.',
-    image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=500&h=300&fit=crop',
+    image: '/images/business-meeting.jpg',
     color: 'from-purple-500 to-purple-600',
   },
   {
     icon: BarChart3,
     title: 'Advanced Analytics',
     description: 'Comprehensive reports on mileage, fuel usage, driver behavior, and fleet performance metrics.',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop',
+    image: '/images/dashboard-analytics.jpg',
     color: 'from-orange-500 to-orange-600',
   },
   {
     icon: Shield,
     title: 'Anti-Theft Protection',
     description: 'Instant alerts on unauthorized movement. Remote immobilization and recovery assistance.',
-    image: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=500&h=300&fit=crop',
+    image: '/images/smart-security.jpg',
     color: 'from-red-500 to-red-600',
   },
   {
     icon: Smartphone,
     title: 'Mobile App',
     description: 'Full-featured mobile app for iOS and Android. Track everything right from your pocket.',
-    image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500&h=300&fit=crop',
+    image: '/images/mobile-app.jpg',
     color: 'from-cyan-500 to-cyan-600',
   },
   {
     icon: Zap,
     title: 'Instant Setup',
     description: 'Plug-and-play devices with automatic configuration. Get started in minutes, not hours.',
-    image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=500&h=300&fit=crop',
+    image: '/images/tech-abstract.jpg',
     color: 'from-yellow-500 to-yellow-600',
   },
   {
     icon: Globe,
     title: 'Global Coverage',
     description: 'Worldwide GPS tracking with multi-network SIM. Track across borders without interruption.',
-    image: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=500&h=300&fit=crop',
+    image: '/images/satellite.jpg',
     color: 'from-emerald-500 to-emerald-600',
   },
   {
     icon: Lock,
     title: 'Data Security',
     description: 'Enterprise-grade encryption and secure data centers. Your tracking data is always protected.',
-    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f2?w=500&h=300&fit=crop',
+    image: '/images/drone.jpg',
     color: 'from-indigo-500 to-indigo-600',
   },
   {
     icon: Gauge,
     title: 'Driver Scoring',
     description: 'Monitor driving behavior with acceleration, braking, and cornering analysis for safer fleets.',
-    image: 'https://images.unsplash.com/photo-1449965408869-ebd13bc9e5a8?w=500&h=300&fit=crop',
+    image: '/images/driving-road.jpg',
     color: 'from-pink-500 to-pink-600',
   },
   {
     icon: Navigation,
     title: 'Live Navigation',
     description: 'Real-time turn-by-turn navigation with traffic updates and ETA predictions for your drivers.',
-    image: 'https://images.unsplash.com/photo-1476242906366-d8eb64c2f661?w=500&h=300&fit=crop',
+    image: '/images/data-analytics.jpg',
     color: 'from-teal-500 to-teal-600',
   },
   {
     icon: Wifi,
     title: 'API Integration',
     description: 'RESTful API and webhooks for seamless integration with your existing business systems.',
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500&h=300&fit=crop',
+    image: '/images/server-room.jpg',
     color: 'from-violet-500 to-violet-600',
   },
 ];
@@ -137,7 +137,7 @@ export default function FeaturesPage() {
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=600&fit=crop"
+            src="/images/earth-night.jpg"
             alt="Technology Background"
             className="w-full h-full object-cover"
           />
@@ -207,7 +207,7 @@ export default function FeaturesPage() {
                 <motion.span
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-xl"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-xl"
                 >
                   Request a Demo <ArrowRight className="w-4 h-4" />
                 </motion.span>
@@ -219,7 +219,7 @@ export default function FeaturesPage() {
               viewport={{ once: true }}
             >
               <img
-                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=700&h=500&fit=crop"
+                src="/images/analytics-screen.jpg"
                 alt="Dashboard Analytics"
                 className="rounded-3xl shadow-2xl shadow-primary-500/10 border border-white/10"
               />

@@ -33,7 +33,7 @@ export default function ContactPage() {
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&h=600&fit=crop"
+            src="/images/phone-contact.jpg"
             alt="Contact Us"
             className="w-full h-full object-cover"
           />
@@ -102,7 +102,7 @@ export default function ContactPage() {
                 className="rounded-2xl overflow-hidden border border-white/10"
               >
                 <img
-                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&h=300&fit=crop"
+                  src="/images/map-aerial.jpg"
                   alt="Office Location Map"
                   className="w-full h-48 object-cover"
                 />
@@ -208,7 +208,7 @@ export default function ContactPage() {
                   type="submit"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-primary-500/25 transition-shadow"
+                  className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-xl flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-primary-500/25 transition-shadow"
                 >
                   {isSubmitted ? (
                     <>
@@ -242,9 +242,9 @@ export default function ContactPage() {
           </motion.h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { city: 'San Francisco', country: 'USA — Headquarters', image: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=500&h=350&fit=crop' },
-              { city: 'London', country: 'United Kingdom', image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=500&h=350&fit=crop' },
-              { city: 'Dubai', country: 'UAE — MENA Hub', image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=500&h=350&fit=crop' },
+              { city: 'San Francisco', country: 'USA — Headquarters', image: '/images/san-francisco.jpg' },
+              { city: 'London', country: 'United Kingdom', image: '/images/london.jpg' },
+              { city: 'Dubai', country: 'UAE — MENA Hub', image: '/images/dubai.jpg' },
             ].map((office, idx) => (
               <motion.div
                 key={office.city}

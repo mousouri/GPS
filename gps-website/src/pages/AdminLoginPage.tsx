@@ -38,7 +38,7 @@ export default function AdminLoginPage() {
       {/* Left Side - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80"
+          src="/images/analytics-screen.jpg"
           alt="Admin Control Center"
           className="absolute inset-0 w-full h-full object-cover"
         />

@@ -38,7 +38,7 @@ export default function LoginPage() {
       {/* Left Side - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80"
+          src="/images/dashboard-analytics.jpg"
           alt="GPS Dashboard"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -164,9 +164,9 @@ export default function LoginPage() {
                 <input type="checkbox" className="w-4 h-4 rounded border-gray-600 bg-dark-800 text-primary-500 focus:ring-primary-500/50" />
                 <span className="text-sm text-gray-400">Remember me</span>
               </label>
-              <a href="#" className="text-sm text-primary-400 hover:text-primary-300 transition-colors">
+              <Link to="/forgot-password" className="text-sm text-primary-400 hover:text-primary-300 transition-colors">
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
             <motion.button
@@ -174,10 +174,10 @@ export default function LoginPage() {
               disabled={isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-dark-950/30 border-t-dark-950 rounded-full animate-spin" />
               ) : (
                 <>
                   Sign In
@@ -190,8 +190,8 @@ export default function LoginPage() {
           <div className="mt-8 text-center">
             <p className="text-gray-500 text-sm">
               Don't have an account?{' '}
-              <Link to="/contact" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">
-                Contact Sales
+              <Link to="/register" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">
+                Sign Up
               </Link>
             </p>
           </div>

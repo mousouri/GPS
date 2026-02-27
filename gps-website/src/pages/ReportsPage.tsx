@@ -61,7 +61,7 @@ export default function ReportsPage() {
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500 pointer-events-none" />
           </div>
-          <button className="px-4 py-2 bg-primary-500 text-white rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors flex items-center gap-2">
+          <button className="px-4 py-2 bg-primary-500 text-dark-950 rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors flex items-center gap-2">
             <Download className="w-4 h-4" />
             Export All
           </button>
@@ -74,7 +74,7 @@ export default function ReportsPage() {
           {(['overview', 'trips', 'fuel', 'downloads'] as const).map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
-                activeTab === tab ? 'bg-primary-500 text-white shadow-lg' : 'text-gray-400 hover:text-white'
+                activeTab === tab ? 'bg-primary-500 text-dark-950 shadow-lg' : 'text-gray-400 hover:text-white'
               }`}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>

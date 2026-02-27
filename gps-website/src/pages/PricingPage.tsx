@@ -21,7 +21,7 @@ const plans = [
     cta: 'Start Free Trial',
     popular: false,
     gradient: 'from-gray-600 to-gray-700',
-    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0afe?w=600&h=300&fit=crop',
+    image: '/images/truck-2.jpg',
   },
   {
     name: 'Professional',
@@ -43,7 +43,7 @@ const plans = [
     cta: 'Start Free Trial',
     popular: true,
     gradient: 'from-primary-500 to-accent-500',
-    image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=600&h=300&fit=crop',
+    image: '/images/fleet-truck.jpg',
   },
   {
     name: 'Enterprise',
@@ -67,7 +67,7 @@ const plans = [
     cta: 'Contact Sales',
     popular: false,
     gradient: 'from-purple-500 to-violet-600',
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=300&fit=crop',
+    image: '/images/skyscraper.jpg',
   },
 ];
 
@@ -92,7 +92,7 @@ export default function PricingPage() {
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&h=600&fit=crop"
+            src="/images/analytics-screen.jpg"
             alt="Pricing Background"
             className="w-full h-full object-cover"
           />
@@ -207,7 +207,7 @@ export default function PricingPage() {
                       whileTap={{ scale: 0.98 }}
                       className={`block w-full py-3 rounded-xl font-semibold text-sm text-center transition-all ${
                         plan.popular
-                          ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:shadow-lg hover:shadow-primary-500/25'
+                          ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 hover:shadow-lg hover:shadow-primary-500/25'
                           : 'glass text-white hover:bg-white/10'
                       }`}
                     >
@@ -291,7 +291,7 @@ export default function PricingPage() {
             className="glass rounded-3xl p-8 lg:p-12"
           >
             <img
-              src="https://images.unsplash.com/photo-1556745757-8d76bdb6984b?w=100&h=100&fit=crop"
+              src="/images/person-testimonial.jpg"
               alt="Satisfaction Guarantee"
               className="w-16 h-16 rounded-full mx-auto mb-4 border-2 border-accent-500"
             />

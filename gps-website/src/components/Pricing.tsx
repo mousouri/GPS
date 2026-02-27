@@ -177,7 +177,7 @@ export default function Pricing() {
                   whileTap={{ scale: 0.98 }}
                   className={`w-full py-3 rounded-xl font-semibold text-sm transition-all ${
                     plan.popular
-                      ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:shadow-lg hover:shadow-primary-500/25'
+                      ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 hover:shadow-lg hover:shadow-primary-500/25'
                       : 'glass text-white hover:bg-white/10'
                   }`}
                 >

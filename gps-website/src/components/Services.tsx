@@ -41,7 +41,7 @@ const services = [
     description: 'Custom GPS solutions for large organizations with dedicated support, API integrations, and white-label options.',
     features: ['Custom integrations', 'White-label platform', 'Dedicated support', 'SLA guarantee'],
     gradient: 'from-cyan-500 to-sky-600',
-    bgGlow: 'bg-cyan-500/10',
+    bgGlow: 'bg-primary-500/10',
   },
   {
     icon: Ship,

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   Search, ChevronDown, HelpCircle, MessageCircle,
   Zap, Shield, CreditCard, Settings, Truck, MapPin,
@@ -153,7 +154,7 @@ export default function FAQPage() {
             <button key={cat.id} onClick={() => setActiveCategory(cat.id)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${
                 activeCategory === cat.id
-                  ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
+                  ? 'bg-primary-500 text-dark-950 shadow-lg shadow-primary-500/25'
                   : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
               }`}>
               <cat.icon className="w-4 h-4" />
@@ -226,7 +227,7 @@ export default function FAQPage() {
           </p>
           <div className="flex items-center justify-center gap-4">
             <Link to="/contact"
-              className="px-6 py-3 bg-primary-500 text-white rounded-xl font-medium hover:bg-primary-600 transition-colors">
+              className="px-6 py-3 bg-primary-500 text-dark-950 rounded-xl font-medium hover:bg-primary-600 transition-colors">
               Contact Support
             </Link>
             <a href="mailto:support@trackpro.com"

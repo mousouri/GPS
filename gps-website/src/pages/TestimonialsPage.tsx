@@ -7,55 +7,55 @@ const testimonials = [
     name: 'Marcus Johnson',
     role: 'Fleet Manager',
     company: 'Swift Logistics',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
+    image: '/images/person-man-1.jpg',
     rating: 5,
     text: 'TrackPro GPS has transformed our fleet operations. We\'ve reduced fuel costs by 23% and improved delivery times by 15%. The real-time tracking is incredibly accurate and the reporting is comprehensive.',
-    companyImage: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=400&h=250&fit=crop',
+    companyImage: '/images/fleet-truck.jpg',
   },
   {
     name: 'Sarah Chen',
     role: 'Operations Director',
     company: 'Pacific Freight',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face',
+    image: '/images/person-woman-1.jpg',
     rating: 5,
     text: 'The best GPS tracking platform we\'ve ever used. The mobile app is intuitive, the alerts are customizable, and the customer support team is phenomenal. We switched from our old provider within a week.',
-    companyImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=250&fit=crop',
+    companyImage: '/images/warehouse.jpg',
   },
   {
     name: 'David Rodriguez',
     role: 'CEO',
     company: 'Urban Express',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
+    image: '/images/person-man-2.jpg',
     rating: 5,
     text: 'With over 500 vehicles in our fleet, we needed a robust solution. TrackPro delivered beyond expectations. The API integration with our existing systems was seamless.',
-    companyImage: 'https://images.unsplash.com/photo-1449965408869-ebd13bc9e5a8?w=400&h=250&fit=crop',
+    companyImage: '/images/driving-road.jpg',
   },
   {
     name: 'Emma Williams',
     role: 'Security Manager',
     company: 'Apex Construction',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face',
+    image: '/images/person-woman-2.jpg',
     rating: 5,
     text: 'We\'ve recovered 3 stolen vehicles thanks to TrackPro\'s anti-theft features. The instant alerts and real-time tracking made it possible. Worth every penny.',
-    companyImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=250&fit=crop',
+    companyImage: '/images/construction.jpg',
   },
   {
     name: 'Ahmed Hassan',
     role: 'Logistics Head',
     company: 'Gulf Transport Co.',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face',
+    image: '/images/person-businessman.jpg',
     rating: 5,
     text: 'Outstanding platform for international tracking. We track our fleet across 15 countries without any coverage gaps. The geofencing feature has been a game-changer for route compliance.',
-    companyImage: 'https://images.unsplash.com/photo-1534224039826-c7a0eda0e6b3?w=400&h=250&fit=crop',
+    companyImage: '/images/logistics.jpg',
   },
   {
     name: 'Lisa Park',
     role: 'VP Operations',
     company: 'FreshDeliver',
-    image: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=200&h=200&fit=crop&crop=face',
+    image: '/images/person-woman-3.jpg',
     rating: 5,
     text: 'The temperature monitoring integration saved us thousands in spoiled goods. Combined with GPS tracking, we have full supply chain visibility. Highly recommended!',
-    companyImage: 'https://images.unsplash.com/photo-1553413077-190dd305871c?w=400&h=250&fit=crop',
+    companyImage: '/images/warehouse-2.jpg',
   },
 ];
 
@@ -69,7 +69,7 @@ export default function TestimonialsPage() {
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1920&h=600&fit=crop"
+            src="/images/team-meeting.jpg"
             alt="Testimonials"
             className="w-full h-full object-cover"
           />
@@ -225,7 +225,7 @@ export default function TestimonialsPage() {
               viewport={{ once: true }}
             >
               <img
-                src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=700&h=500&fit=crop"
+                src="/images/fleet-truck.jpg"
                 alt="Swift Logistics Fleet"
                 className="rounded-3xl shadow-2xl shadow-primary-500/10 border border-white/10"
               />

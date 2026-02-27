@@ -27,12 +27,12 @@ const alerts = [
 ];
 
 const sidebarItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', active: true },
-  { icon: Truck, label: 'Fleet' },
-  { icon: Map, label: 'Live Map' },
-  { icon: BarChart3, label: 'Analytics' },
-  { icon: AlertTriangle, label: 'Alerts' },
-  { icon: Settings, label: 'Settings' },
+  { icon: LayoutDashboard, label: 'Dashboard', active: true, path: '/dashboard' },
+  { icon: Truck, label: 'Fleet', path: '/dashboard' },
+  { icon: Map, label: 'Live Map', path: '/dashboard/map' },
+  { icon: BarChart3, label: 'Reports', path: '/dashboard/reports' },
+  { icon: Shield, label: 'Geofences', path: '/dashboard/geofence' },
+  { icon: Settings, label: 'Settings', path: '/dashboard/profile' },
 ];
 
 export default function DashboardPage() {
@@ -74,18 +74,19 @@ export default function DashboardPage() {
         {/* Nav Items */}
         <nav className="flex-1 p-4 space-y-1">
           {sidebarItems.map((item) => (
-            <motion.button
-              key={item.label}
-              whileHover={{ x: 4 }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${
-                item.active
-                  ? 'bg-primary-500/10 text-primary-400 border border-primary-500/20'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-              {item.label}
-            </motion.button>
+            <Link key={item.label} to={item.path}>
+              <motion.div
+                whileHover={{ x: 4 }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${
+                  item.active
+                    ? 'bg-primary-500/10 text-primary-400 border border-primary-500/20'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <item.icon className="w-5 h-5" />
+                {item.label}
+              </motion.div>
+            </Link>
           ))}
         </nav>
 
@@ -93,7 +94,7 @@ export default function DashboardPage() {
         <div className="p-4 border-t border-white/5">
           <div className="flex items-center gap-3 px-3 py-2">
             <img
-              src={user?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face'}
+              src={user?.avatar || '/images/person-man-2.jpg'}
               alt={user?.name}
               className="w-9 h-9 rounded-full object-cover ring-2 ring-primary-500/30"
             />
@@ -151,7 +152,7 @@ export default function DashboardPage() {
                           <div key={alert.id} className="p-4 border-b border-white/5 hover:bg-white/5 transition-colors">
                             <div className="flex items-start gap-3">
                               <div className={`w-2 h-2 mt-2 rounded-full shrink-0 ${
-                                alert.type === 'danger' ? 'bg-red-500' : alert.type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+                                alert.type === 'danger' ? 'bg-red-500' : alert.type === 'warning' ? 'bg-yellow-500' : 'bg-primary-500'
                               }`} />
                               <div>
                                 <p className="text-sm text-gray-300">{alert.message}</p>
@@ -255,7 +256,7 @@ export default function DashboardPage() {
               </div>
               <div className="relative h-80">
                 <img
-                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200&q=80"
+                  src="/images/map-aerial.jpg"
                   alt="Fleet Map"
                   className="w-full h-full object-cover opacity-60"
                 />
@@ -314,7 +315,7 @@ export default function DashboardPage() {
                   >
                     <div className="flex items-start gap-3">
                       <div className={`w-2 h-2 mt-2 rounded-full shrink-0 ${
-                        alert.type === 'danger' ? 'bg-red-500' : alert.type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+                        alert.type === 'danger' ? 'bg-red-500' : alert.type === 'warning' ? 'bg-yellow-500' : 'bg-primary-500'
                       }`} />
                       <div>
                         <p className="text-sm text-gray-300">{alert.message}</p>

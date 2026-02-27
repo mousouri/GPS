@@ -9,7 +9,7 @@ const services = [
     title: 'Fleet Management',
     description: 'Complete fleet tracking with driver management, fuel monitoring, maintenance scheduling, and comprehensive reporting for logistics companies.',
     features: ['Real-time fleet overview', 'Driver performance scoring', 'Fuel consumption tracking', 'Maintenance alerts'],
-    image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=700&h=450&fit=crop',
+    image: '/images/fleet-truck.jpg',
     gradient: 'from-primary-500 to-blue-600',
   },
   {
@@ -17,7 +17,7 @@ const services = [
     title: 'Vehicle Tracking',
     description: 'Personal and commercial vehicle tracking with anti-theft protection, trip logging, and driving behavior analysis.',
     features: ['Anti-theft alerts', 'Trip history log', 'Speed monitoring', 'Remote immobilization'],
-    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0afe?w=700&h=450&fit=crop',
+    image: '/images/truck-2.jpg',
     gradient: 'from-accent-500 to-emerald-600',
   },
   {
@@ -25,7 +25,7 @@ const services = [
     title: 'Asset Tracking',
     description: 'Track valuable equipment, containers, and cargo across the supply chain with real-time location and condition monitoring.',
     features: ['Container tracking', 'Temperature monitoring', 'Tamper detection', 'Chain of custody'],
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=700&h=450&fit=crop',
+    image: '/images/warehouse.jpg',
     gradient: 'from-purple-500 to-violet-600',
   },
   {
@@ -33,7 +33,7 @@ const services = [
     title: 'Personnel Tracking',
     description: 'Workforce safety and management with lone worker protection, attendance tracking, and emergency SOS capabilities.',
     features: ['Lone worker safety', 'SOS emergency button', 'Attendance tracking', 'Zone management'],
-    image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=700&h=450&fit=crop',
+    image: '/images/team-meeting.jpg',
     gradient: 'from-orange-500 to-amber-600',
   },
   {
@@ -41,7 +41,7 @@ const services = [
     title: 'Enterprise Solutions',
     description: 'Custom GPS solutions for large organizations with dedicated support, API integrations, and white-label options.',
     features: ['Custom integrations', 'White-label platform', 'Dedicated support', 'SLA guarantee'],
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=700&h=450&fit=crop',
+    image: '/images/skyscraper.jpg',
     gradient: 'from-cyan-500 to-sky-600',
   },
   {
@@ -49,7 +49,7 @@ const services = [
     title: 'Marine Tracking',
     description: 'Vessel tracking and maritime fleet management with AIS integration, port notifications, and voyage reporting.',
     features: ['AIS integration', 'Port notifications', 'Voyage reports', 'Weather overlay'],
-    image: 'https://images.unsplash.com/photo-1534224039826-c7a0eda0e6b3?w=700&h=450&fit=crop',
+    image: '/images/logistics.jpg',
     gradient: 'from-indigo-500 to-blue-700',
   },
 ];
@@ -64,7 +64,7 @@ export default function ServicesPage() {
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=1920&h=600&fit=crop"
+            src="/images/woman-laptop.jpg"
             alt="Services Background"
             className="w-full h-full object-cover"
           />
@@ -144,7 +144,7 @@ export default function ServicesPage() {
                   <motion.span
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-xl"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-xl"
                   >
                     Get Started <ArrowRight className="w-4 h-4" />
                   </motion.span>
@@ -159,7 +159,7 @@ export default function ServicesPage() {
       <section className="relative py-20 overflow-hidden border-t border-white/5">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&h=500&fit=crop"
+            src="/images/office-tech.jpg"
             alt="CTA Background"
             className="w-full h-full object-cover"
           />
@@ -182,7 +182,7 @@ export default function ServicesPage() {
               <motion.span
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="inline-block px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-2xl"
+                className="inline-block px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-2xl"
               >
                 Talk to an Expert
               </motion.span>

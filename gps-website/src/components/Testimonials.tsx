@@ -126,7 +126,7 @@ export default function Testimonials() {
 
                     {/* Author */}
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-dark-950 font-bold text-sm">
                         {testimonial.image}
                       </div>
                       <div>
@@ -159,7 +159,7 @@ export default function Testimonials() {
                 </div>
                 <p className="text-gray-300 text-sm leading-relaxed mb-4">"{testimonial.text}"</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-xs">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-dark-950 font-bold text-xs">
                     {testimonial.image}
                   </div>
                   <div>

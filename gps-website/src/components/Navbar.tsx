@@ -125,7 +125,7 @@ export default function Navbar() {
                   <motion.span
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-primary-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-shadow inline-block"
+                    className="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-shadow inline-block"
                   >
                     Get Started
                   </motion.span>
@@ -211,7 +211,7 @@ export default function Navbar() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="block px-4 py-3 mt-1 text-center bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-xl"
+                      className="block px-4 py-3 mt-1 text-center bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-xl"
                     >
                       Get Started
                     </motion.span>
@@ -222,4 +222,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </mo
+    </motion.nav>
+  );
+}

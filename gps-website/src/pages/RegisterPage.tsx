@@ -64,7 +64,7 @@ export default function RegisterPage() {
       {/* Left Side - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80"
+          src="/images/skyscraper.jpg"
           alt="Modern Building"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -133,7 +133,7 @@ export default function RegisterPage() {
             {[1, 2].map((s) => (
               <div key={s} className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                  step >= s ? 'bg-primary-500 text-white' : 'bg-white/5 text-gray-500'
+                  step >= s ? 'bg-primary-500 text-dark-950' : 'bg-white/5 text-gray-500'
                 }`}>
                   {step > s ? <Check className="w-4 h-4" /> : s}
                 </div>
@@ -252,9 +252,9 @@ export default function RegisterPage() {
                 </motion.button>
               )}
               <motion.button type="submit" disabled={isLoading} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                className="flex-1 py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                className="flex-1 py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                 {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-dark-950/30 border-t-dark-950 rounded-full animate-spin" />
                 ) : (
                   <>{step === 1 ? 'Continue' : 'Create Account'} <ArrowRight className="w-4 h-4" /></>
                 )}

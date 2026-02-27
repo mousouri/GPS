@@ -22,9 +22,9 @@ interface Geofence {
 }
 
 const geofences: Geofence[] = [
-  { id: 'GF-001', name: 'Main Depot Zone', type: 'circle', status: 'active', alerts: 3, radius: '500m', color: '#3396ff', vehicles: 12, x: 45, y: 40, size: 12 },
+  { id: 'GF-001', name: 'Main Depot Zone', type: 'circle', status: 'active', alerts: 3, radius: '500m', color: '#eab308', vehicles: 12, x: 45, y: 40, size: 12 },
   { id: 'GF-002', name: 'Downtown Restricted', type: 'polygon', status: 'active', alerts: 8, color: '#ef4444', vehicles: 5, x: 60, y: 30, size: 15 },
-  { id: 'GF-003', name: 'Warehouse District', type: 'rectangle', status: 'active', alerts: 1, color: '#17b364', vehicles: 8, x: 30, y: 55, size: 10 },
+  { id: 'GF-003', name: 'Warehouse District', type: 'rectangle', status: 'active', alerts: 1, color: '#f59e0b', vehicles: 8, x: 30, y: 55, size: 10 },
   { id: 'GF-004', name: 'School Zone Alpha', type: 'circle', status: 'active', alerts: 12, radius: '200m', color: '#f59e0b', vehicles: 3, x: 70, y: 60, size: 8 },
   { id: 'GF-005', name: 'Highway Corridor', type: 'polygon', status: 'inactive', alerts: 0, color: '#8b5cf6', vehicles: 0, x: 20, y: 35, size: 18 },
   { id: 'GF-006', name: 'Client Site - Acme', type: 'circle', status: 'active', alerts: 2, radius: '300m', color: '#06b6d4', vehicles: 4, x: 55, y: 70, size: 9 },
@@ -54,7 +54,7 @@ export default function GeofencePage() {
           </div>
         </div>
         <button onClick={() => setShowCreate(!showCreate)}
-          className="px-4 py-2 bg-primary-500 text-white rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors flex items-center gap-2">
+          className="px-4 py-2 bg-primary-500 text-dark-950 rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors flex items-center gap-2">
           <Plus className="w-4 h-4" />
           Create Zone
         </button>
@@ -121,7 +121,7 @@ export default function GeofencePage() {
         {/* Map */}
         <div className="flex-1 relative overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=1600&q=80"
+            src="/images/city-map.jpg"
             alt="Map"
             className="absolute inset-0 w-full h-full object-cover opacity-40"
           />

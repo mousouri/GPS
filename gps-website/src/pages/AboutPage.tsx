@@ -22,25 +22,25 @@ const team = [
   {
     name: 'Alex Rivera',
     role: 'CEO & Founder',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face',
+    image: '/images/person-businessman.jpg',
     bio: '15+ years in GPS technology and fleet management.',
   },
   {
     name: 'Sarah Chen',
     role: 'CTO',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face',
+    image: '/images/person-woman-1.jpg',
     bio: 'Former Google engineer, satellite systems expert.',
   },
   {
     name: 'Marcus Johnson',
     role: 'VP of Engineering',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
+    image: '/images/person-man-2.jpg',
     bio: 'Built tracking systems for Fortune 500 companies.',
   },
   {
     name: 'Emily Park',
     role: 'Head of Product',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face',
+    image: '/images/person-woman-2.jpg',
     bio: 'Passionate about intuitive user experiences.',
   },
 ];
@@ -55,7 +55,7 @@ export default function AboutPage() {
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&h=600&fit=crop"
+            src="/images/modern-office.jpg"
             alt="About Us"
             className="w-full h-full object-cover"
           />
@@ -94,7 +94,7 @@ export default function AboutPage() {
               viewport={{ once: true }}
             >
               <img
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=700&h=500&fit=crop"
+                src="/images/teamwork.jpg"
                 alt="Our Team Working"
                 className="rounded-3xl shadow-2xl shadow-primary-500/10 border border-white/10"
               />
@@ -145,7 +145,7 @@ export default function AboutPage() {
               className="relative glass rounded-3xl overflow-hidden group"
             >
               <img
-                src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=700&h=300&fit=crop"
+                src="/images/earth-night.jpg"
                 alt="Our Mission"
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -172,7 +172,7 @@ export default function AboutPage() {
               className="relative glass rounded-3xl overflow-hidden group"
             >
               <img
-                src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=700&h=300&fit=crop"
+                src="/images/office-tech.jpg"
                 alt="Our Vision"
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -321,7 +321,7 @@ export default function AboutPage() {
             className="relative rounded-3xl overflow-hidden"
           >
             <img
-              src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&h=500&fit=crop"
+              src="/images/modern-office.jpg"
               alt="TrackPro Office"
               className="w-full h-[400px] object-cover"
             />

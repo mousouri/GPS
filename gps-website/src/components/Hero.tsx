@@ -100,9 +100,9 @@ export default function Hero() {
           >
             <motion.a
               href="#contact"
-              whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(51, 150, 255, 0.3)' }}
+              whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(234, 179, 8, 0.3)' }}
               whileTap={{ scale: 0.95 }}
-              className="group px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-2xl flex items-center gap-2 text-lg transition-all"
+              className="group px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-2xl flex items-center gap-2 text-lg transition-all"
             >
               Start Free Trial
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

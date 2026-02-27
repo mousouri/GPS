@@ -19,12 +19,12 @@ const platformStats = [
 ];
 
 const recentUsers = [
-  { id: 1, name: 'Anderson Logistics', email: 'contact@anderson.com', plan: 'Enterprise', devices: 156, status: 'active', revenue: '$4,200/mo', joinDate: 'Feb 15, 2026', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop&crop=face' },
-  { id: 2, name: 'Swift Transport', email: 'info@swift.com', plan: 'Professional', devices: 48, status: 'active', revenue: '$1,800/mo', joinDate: 'Feb 12, 2026', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face' },
-  { id: 3, name: 'Metro Delivery Co.', email: 'ops@metro.com', plan: 'Starter', devices: 12, status: 'trial', revenue: '$0 (trial)', joinDate: 'Feb 20, 2026', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=80&h=80&fit=crop&crop=face' },
-  { id: 4, name: 'Pacific Fleet Inc.', email: 'fleet@pacific.com', plan: 'Enterprise', devices: 230, status: 'active', revenue: '$6,500/mo', joinDate: 'Jan 08, 2026', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face' },
-  { id: 5, name: 'City Cab Services', email: 'admin@citycab.com', plan: 'Professional', devices: 75, status: 'past_due', revenue: '$2,100/mo', joinDate: 'Dec 03, 2025', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face' },
-  { id: 6, name: 'Global Marine Ltd.', email: 'ops@globalmarine.com', plan: 'Enterprise', devices: 89, status: 'active', revenue: '$3,800/mo', joinDate: 'Feb 22, 2026', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop&crop=face' },
+  { id: 1, name: 'Anderson Logistics', email: 'contact@anderson.com', plan: 'Enterprise', devices: 156, status: 'active', revenue: '$4,200/mo', joinDate: 'Feb 15, 2026', avatar: '/images/person-businessman.jpg' },
+  { id: 2, name: 'Swift Transport', email: 'info@swift.com', plan: 'Professional', devices: 48, status: 'active', revenue: '$1,800/mo', joinDate: 'Feb 12, 2026', avatar: '/images/person-man-1.jpg' },
+  { id: 3, name: 'Metro Delivery Co.', email: 'ops@metro.com', plan: 'Starter', devices: 12, status: 'trial', revenue: '$0 (trial)', joinDate: 'Feb 20, 2026', avatar: '/images/person-businessman-2.jpg' },
+  { id: 4, name: 'Pacific Fleet Inc.', email: 'fleet@pacific.com', plan: 'Enterprise', devices: 230, status: 'active', revenue: '$6,500/mo', joinDate: 'Jan 08, 2026', avatar: '/images/person-man-2.jpg' },
+  { id: 5, name: 'City Cab Services', email: 'admin@citycab.com', plan: 'Professional', devices: 75, status: 'past_due', revenue: '$2,100/mo', joinDate: 'Dec 03, 2025', avatar: '/images/person-man-3.jpg' },
+  { id: 6, name: 'Global Marine Ltd.', email: 'ops@globalmarine.com', plan: 'Enterprise', devices: 89, status: 'active', revenue: '$3,800/mo', joinDate: 'Feb 22, 2026', avatar: '/images/person-woman-6.jpg' },
 ];
 
 const systemHealth = [
@@ -35,13 +35,13 @@ const systemHealth = [
 ];
 
 const sidebarItems = [
-  { icon: LayoutDashboard, label: 'Overview', active: true },
-  { icon: Users, label: 'Users' },
-  { icon: CreditCard, label: 'Billing' },
-  { icon: BarChart3, label: 'Analytics' },
-  { icon: Globe, label: 'Devices' },
-  { icon: Server, label: 'System' },
-  { icon: Settings, label: 'Settings' },
+  { icon: LayoutDashboard, label: 'Overview', active: true, path: '/admin/dashboard' },
+  { icon: Users, label: 'Users', path: '/admin/users/USR-2847' },
+  { icon: CreditCard, label: 'Billing', path: '/admin/billing' },
+  { icon: BarChart3, label: 'Audit Log', path: '/admin/audit-log' },
+  { icon: Globe, label: 'Devices', path: '/admin/dashboard' },
+  { icon: Server, label: 'System', path: '/admin/dashboard' },
+  { icon: Settings, label: 'Settings', path: '/admin/dashboard' },
 ];
 
 const revenueData = [
@@ -93,18 +93,19 @@ export default function AdminDashboardPage() {
         {/* Nav Items */}
         <nav className="flex-1 p-4 space-y-1">
           {sidebarItems.map((item) => (
-            <motion.button
-              key={item.label}
-              whileHover={{ x: 4 }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${
-                item.active
-                  ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <item.icon className="w-5 h-5" />
-              {item.label}
-            </motion.button>
+            <Link key={item.label} to={item.path}>
+              <motion.div
+                whileHover={{ x: 4 }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all ${
+                  item.active
+                    ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <item.icon className="w-5 h-5" />
+                {item.label}
+              </motion.div>
+            </Link>
           ))}
         </nav>
 
@@ -112,7 +113,7 @@ export default function AdminDashboardPage() {
         <div className="p-4 border-t border-white/5">
           <div className="flex items-center gap-3 px-3 py-2">
             <img
-              src={user?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face'}
+              src={user?.avatar || '/images/person-woman-4.jpg'}
               alt={user?.name}
               className="w-9 h-9 rounded-full object-cover ring-2 ring-red-500/30"
             />
@@ -177,8 +178,8 @@ export default function AdminDashboardPage() {
                             <p className="text-xs text-gray-500 mt-1">1 hr ago</p>
                           </div>
                         </div>
-                        <div className="flex items-start gap-3 p-3 rounded-xl bg-blue-500/5">
-                          <div className="w-2 h-2 mt-1.5 rounded-full bg-blue-500" />
+                        <div className="flex items-start gap-3 p-3 rounded-xl bg-primary-500/5">
+                          <div className="w-2 h-2 mt-1.5 rounded-full bg-primary-500" />
                           <div>
                             <p className="text-sm text-gray-300">New enterprise signup: Global Marine</p>
                             <p className="text-xs text-gray-500 mt-1">3 hr ago</p>
@@ -253,7 +254,7 @@ export default function AdminDashboardPage() {
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                     stat.color === 'primary' ? 'bg-primary-500/10 text-primary-400' :
                     stat.color === 'accent' ? 'bg-accent-500/10 text-accent-400' :
-                    stat.color === 'blue' ? 'bg-blue-500/10 text-blue-400' :
+                    stat.color === 'blue' ? 'bg-primary-500/10 text-primary-400' :
                     'bg-purple-500/10 text-purple-400'
                   }`}>
                     <stat.icon className="w-5 h-5" />
@@ -428,7 +429,7 @@ export default function AdminDashboardPage() {
                       <td className="px-5 py-4">
                         <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${
                           u.status === 'active' ? 'bg-accent-500/10 text-accent-400' :
-                          u.status === 'trial' ? 'bg-blue-500/10 text-blue-400' :
+                          u.status === 'trial' ? 'bg-primary-500/10 text-primary-400' :
                           'bg-red-500/10 text-red-400'
                         }`}>
                           {u.status === 'active' ? <CheckCircle className="w-3 h-3" /> :

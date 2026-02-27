@@ -80,7 +80,7 @@ export default function ProfilePage() {
               <div className="flex items-center gap-6">
                 <div className="relative group">
                   <img
-                    src={user?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face'}
+                    src={user?.avatar || '/images/person-man-2.jpg'}
                     alt={user?.name}
                     className="w-24 h-24 rounded-2xl object-cover ring-2 ring-white/10"
                   />
@@ -267,7 +267,7 @@ export default function ProfilePage() {
               onClick={handleSave}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-500 text-dark-950 font-semibold rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all flex items-center gap-2"
             >
               {saved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
               {saved ? 'Saved!' : 'Save Changes'}
