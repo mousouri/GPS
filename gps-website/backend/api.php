@@ -53,8 +53,26 @@ switch ($action) {
     case 'admin_user':
         gps_handle_admin_user($pdo);
         break;
+    case 'admin_users':
+        gps_handle_admin_users($pdo);
+        break;
+    case 'admin_devices':
+        gps_handle_admin_devices($pdo);
+        break;
     case 'profile':
         gps_handle_profile($pdo);
+        break;
+    case 'vehicle':
+        gps_handle_vehicle_crud($pdo);
+        break;
+    case 'geofence':
+        gps_handle_geofence_single($pdo);
+        break;
+    case 'preferences':
+        gps_handle_preferences($pdo);
+        break;
+    case 'export_report':
+        gps_handle_export_report($pdo);
         break;
     default:
         gps_respond(['error' => 'Unknown action.'], 404);
@@ -64,14 +82,16 @@ function gps_bootstrap_api(PDO $pdo): void
 {
     $allowedOrigin = gps_env('GPS_FRONTEND_ORIGIN', 'http://localhost:5173');
     $requestOrigin = isset($_SERVER['HTTP_ORIGIN']) ? (string) $_SERVER['HTTP_ORIGIN'] : '';
+    $localOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+    $allowLocalDevOrigin = in_array($allowedOrigin, $localOrigins, true) && in_array($requestOrigin, $localOrigins, true);
 
-    if ($allowedOrigin === '*' || $requestOrigin === '' || $requestOrigin === $allowedOrigin) {
+    if ($allowedOrigin === '*' || $requestOrigin === '' || $requestOrigin === $allowedOrigin || $allowLocalDevOrigin) {
         header('Access-Control-Allow-Origin: ' . ($allowedOrigin === '*' || $requestOrigin === '' ? $allowedOrigin : $requestOrigin));
     }
 
     header('Vary: Origin');
-    header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Content-Type: application/json');
 
     if (gps_method() === 'OPTIONS') {
@@ -632,6 +652,10 @@ function gps_handle_admin_audit_log(PDO $pdo): void
     gps_require_method(['GET']);
     gps_require_auth($pdo, 'admin');
 
+    $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+    $perPage = isset($_GET['per_page']) ? min(100, max(5, (int) $_GET['per_page'])) : 20;
+    $offset = ($page - 1) * $perPage;
+
     $summary = [
         'totalEvents' => (int) $pdo->query('SELECT COUNT(*) FROM audit_logs')->fetchColumn(),
         'criticalEvents' => (int) $pdo->query("SELECT COUNT(*) FROM audit_logs WHERE severity = 'critical'")->fetchColumn(),
@@ -639,12 +663,16 @@ function gps_handle_admin_audit_log(PDO $pdo): void
         'systemEvents' => (int) $pdo->query("SELECT COUNT(*) FROM audit_logs WHERE category = 'system'")->fetchColumn(),
     ];
 
-    $entries = $pdo->query(
-        'SELECT id, actor_name, action, target, category, severity, created_at, ip_address, details
+    $totalPages = max(1, (int) ceil($summary['totalEvents'] / $perPage));
+
+    $entries = $pdo->prepare(
+        "SELECT id, actor_name, action, target, category, severity, created_at, ip_address, details
          FROM audit_logs
          ORDER BY created_at DESC, id DESC
-         LIMIT 50'
-    )->fetchAll();
+         LIMIT $perPage OFFSET $offset"
+    );
+    $entries->execute();
+    $rows = $entries->fetchAll();
 
     $entryData = array_map(static function (array $row): array {
         return [
@@ -658,12 +686,18 @@ function gps_handle_admin_audit_log(PDO $pdo): void
             'ip' => $row['ip_address'],
             'details' => $row['details'],
         ];
-    }, $entries);
+    }, $rows);
 
     gps_respond([
         'success' => true,
         'summary' => $summary,
         'entries' => $entryData,
+        'pagination' => [
+            'page' => $page,
+            'perPage' => $perPage,
+            'totalEvents' => $summary['totalEvents'],
+            'totalPages' => $totalPages,
+        ],
     ]);
 }
 
@@ -781,18 +815,27 @@ function gps_handle_profile(PDO $pdo): void
     $user = gps_require_auth($pdo);
 
     if (gps_method() === 'GET') {
+        $prefsStmt = $pdo->prepare('SELECT * FROM notification_preferences WHERE user_id = ?');
+        $prefsStmt->execute([(int) $user['id']]);
+        $prefs = $prefsStmt->fetch();
+
+        $preferences = $prefs ? [
+            'emailAlerts' => (bool) $prefs['email_alerts'],
+            'smsAlerts' => (bool) $prefs['sms_alerts'],
+            'pushAlerts' => (bool) $prefs['push_alerts'],
+            'speedAlerts' => (bool) $prefs['speed_alerts'],
+            'geofenceAlerts' => (bool) $prefs['geofence_alerts'],
+            'maintenanceAlerts' => (bool) $prefs['maintenance_alerts'],
+            'fuelAlerts' => (bool) $prefs['fuel_alerts'],
+        ] : [
+            'emailAlerts' => true, 'smsAlerts' => false, 'pushAlerts' => true,
+            'speedAlerts' => true, 'geofenceAlerts' => true, 'maintenanceAlerts' => true, 'fuelAlerts' => false,
+        ];
+
         gps_respond([
             'success' => true,
             'user' => gps_format_user($user),
-            'preferences' => [
-                'emailAlerts' => true,
-                'smsAlerts' => false,
-                'pushAlerts' => true,
-                'speedAlerts' => true,
-                'geofenceAlerts' => true,
-                'maintenanceAlerts' => true,
-                'fuelAlerts' => false,
-            ],
+            'preferences' => $preferences,
         ]);
     }
 
@@ -1273,42 +1316,483 @@ function gps_ensure_schema(PDO $pdo): void
             CONSTRAINT fk_audit_actor FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
     );
+
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS notification_preferences (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL UNIQUE,
+            email_alerts TINYINT(1) NOT NULL DEFAULT 1,
+            sms_alerts TINYINT(1) NOT NULL DEFAULT 0,
+            push_alerts TINYINT(1) NOT NULL DEFAULT 1,
+            speed_alerts TINYINT(1) NOT NULL DEFAULT 1,
+            geofence_alerts TINYINT(1) NOT NULL DEFAULT 1,
+            maintenance_alerts TINYINT(1) NOT NULL DEFAULT 1,
+            fuel_alerts TINYINT(1) NOT NULL DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NULL,
+            CONSTRAINT fk_notif_prefs_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+    );
 }
 
 function gps_add_column_if_missing(PDO $pdo, string $table, string $column, string $definition): void
 {
-    $statement = $pdo->prepare('SHOW COLUMNS FROM `' . $table . '` LIKE ?');
-    $statement->execute([$column]);
+    $statement = $pdo->prepare(
+        'SELECT 1
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = ?
+           AND COLUMN_NAME = ?
+         LIMIT 1'
+    );
+    $statement->execute([$table, $column]);
 
     if (!$statement->fetch()) {
         $pdo->exec('ALTER TABLE `' . $table . '` ADD COLUMN `' . $column . '` ' . $definition);
     }
 }
 
+/* ============================
+   NEW HANDLER FUNCTIONS
+   ============================ */
+
+function gps_handle_admin_users(PDO $pdo): void
+{
+    gps_require_method(['GET']);
+    gps_require_auth($pdo, 'admin');
+
+    $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+    $perPage = isset($_GET['per_page']) ? min(50, max(5, (int) $_GET['per_page'])) : 10;
+    $search = isset($_GET['search']) ? trim((string) $_GET['search']) : '';
+    $statusFilter = isset($_GET['status']) ? trim((string) $_GET['status']) : '';
+    $planFilter = isset($_GET['plan']) ? trim((string) $_GET['plan']) : '';
+
+    $where = "WHERE role = 'user'";
+    $params = [];
+
+    if ($search !== '') {
+        $where .= ' AND (name LIKE ? OR email LIKE ? OR company LIKE ?)';
+        $searchParam = '%' . $search . '%';
+        $params[] = $searchParam;
+        $params[] = $searchParam;
+        $params[] = $searchParam;
+    }
+
+    if ($statusFilter !== '' && in_array($statusFilter, ['active', 'suspended'], true)) {
+        $where .= ' AND status = ?';
+        $params[] = $statusFilter;
+    }
+
+    if ($planFilter !== '' && in_array($planFilter, ['Starter', 'Professional', 'Enterprise'], true)) {
+        $where .= ' AND plan = ?';
+        $params[] = $planFilter;
+    }
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM users $where");
+    $countStmt->execute($params);
+    $totalUsers = (int) $countStmt->fetchColumn();
+    $totalPages = max(1, (int) ceil($totalUsers / $perPage));
+    $offset = ($page - 1) * $perPage;
+
+    $stmt = $pdo->prepare(
+        "SELECT id, name, email, plan, status, company, avatar, phone, created_at, last_login_at
+         FROM users $where
+         ORDER BY created_at DESC
+         LIMIT $perPage OFFSET $offset"
+    );
+    $stmt->execute($params);
+    $rows = $stmt->fetchAll();
+
+    $users = [];
+    foreach ($rows as $row) {
+        $devCount = $pdo->prepare('SELECT COUNT(*) FROM vehicles WHERE user_id = ?');
+        $devCount->execute([(int) $row['id']]);
+        $revStmt = $pdo->prepare("SELECT COALESCE(SUM(amount_cents), 0) FROM invoices WHERE user_id = ? AND status = 'completed'");
+        $revStmt->execute([(int) $row['id']]);
+
+        $users[] = [
+            'id' => 'USR-' . (int) $row['id'],
+            'name' => $row['name'],
+            'email' => $row['email'],
+            'company' => $row['company'],
+            'plan' => $row['plan'],
+            'status' => $row['status'],
+            'phone' => $row['phone'],
+            'devices' => (int) $devCount->fetchColumn(),
+            'revenue' => '$' . number_format(((int) $revStmt->fetchColumn()) / 100, 0),
+            'avatar' => $row['avatar'] !== '' ? $row['avatar'] : '/images/person-man-2.jpg',
+            'joinDate' => date('M d, Y', strtotime((string) $row['created_at'])),
+            'lastLogin' => $row['last_login_at'] ? date('M d, Y H:i', strtotime((string) $row['last_login_at'])) : 'Never',
+        ];
+    }
+
+    gps_respond([
+        'success' => true,
+        'users' => $users,
+        'pagination' => [
+            'page' => $page,
+            'perPage' => $perPage,
+            'totalUsers' => $totalUsers,
+            'totalPages' => $totalPages,
+        ],
+    ]);
+}
+
+function gps_handle_admin_devices(PDO $pdo): void
+{
+    gps_require_method(['GET']);
+    gps_require_auth($pdo, 'admin');
+
+    $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+    $perPage = isset($_GET['per_page']) ? min(50, max(5, (int) $_GET['per_page'])) : 10;
+    $search = isset($_GET['search']) ? trim((string) $_GET['search']) : '';
+    $statusFilter = isset($_GET['status']) ? trim((string) $_GET['status']) : '';
+
+    $where = '1=1';
+    $params = [];
+
+    if ($search !== '') {
+        $where .= ' AND (v.name LIKE ? OR v.driver_name LIKE ? OR v.vehicle_code LIKE ? OR u.company LIKE ?)';
+        $searchParam = '%' . $search . '%';
+        $params = array_merge($params, [$searchParam, $searchParam, $searchParam, $searchParam]);
+    }
+
+    if ($statusFilter !== '' && in_array($statusFilter, ['active', 'idle', 'maintenance'], true)) {
+        $where .= ' AND v.status = ?';
+        $params[] = $statusFilter;
+    }
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM vehicles v INNER JOIN users u ON u.id = v.user_id WHERE $where");
+    $countStmt->execute($params);
+    $totalDevices = (int) $countStmt->fetchColumn();
+    $totalPages = max(1, (int) ceil($totalDevices / $perPage));
+    $offset = ($page - 1) * $perPage;
+
+    $stmt = $pdo->prepare(
+        "SELECT v.*, u.name AS owner_name, u.company AS owner_company, u.email AS owner_email
+         FROM vehicles v
+         INNER JOIN users u ON u.id = v.user_id
+         WHERE $where
+         ORDER BY v.last_ping_at DESC
+         LIMIT $perPage OFFSET $offset"
+    );
+    $stmt->execute($params);
+    $rows = $stmt->fetchAll();
+
+    $devices = array_map(static function (array $row): array {
+        return [
+            'id' => $row['vehicle_code'],
+            'name' => $row['name'],
+            'status' => $row['status'],
+            'speed' => (int) $row['speed'],
+            'fuel' => (int) $row['fuel_level'],
+            'battery' => (int) $row['battery_level'],
+            'driver' => $row['driver_name'],
+            'location' => $row['location_label'],
+            'lat' => (float) $row['latitude'],
+            'lng' => (float) $row['longitude'],
+            'type' => $row['vehicle_type'],
+            'lastPingAt' => $row['last_ping_at'],
+            'owner' => $row['owner_company'] !== '' ? $row['owner_company'] : $row['owner_name'],
+            'ownerEmail' => $row['owner_email'],
+        ];
+    }, $rows);
+
+    $totalActive = (int) $pdo->query("SELECT COUNT(*) FROM vehicles WHERE status = 'active'")->fetchColumn();
+    $totalIdle = (int) $pdo->query("SELECT COUNT(*) FROM vehicles WHERE status = 'idle'")->fetchColumn();
+    $totalMaintenance = (int) $pdo->query("SELECT COUNT(*) FROM vehicles WHERE status = 'maintenance'")->fetchColumn();
+
+    gps_respond([
+        'success' => true,
+        'devices' => $devices,
+        'stats' => [
+            'total' => $totalActive + $totalIdle + $totalMaintenance,
+            'active' => $totalActive,
+            'idle' => $totalIdle,
+            'maintenance' => $totalMaintenance,
+        ],
+        'pagination' => [
+            'page' => $page,
+            'perPage' => $perPage,
+            'totalDevices' => $totalDevices,
+            'totalPages' => $totalPages,
+        ],
+    ]);
+}
+
+function gps_handle_vehicle_crud(PDO $pdo): void
+{
+    $user = gps_require_auth($pdo);
+
+    $vehicleId = isset($_GET['id']) ? trim((string) $_GET['id']) : '';
+
+    if (gps_method() === 'POST' && $vehicleId === '') {
+        $payload = gps_json_input();
+        $name = trim((string) ($payload['name'] ?? ''));
+        $driver = trim((string) ($payload['driver'] ?? ''));
+        $type = trim((string) ($payload['type'] ?? 'GPS Tracker Pro'));
+        $location = trim((string) ($payload['location'] ?? ''));
+        $lat = isset($payload['lat']) ? (float) $payload['lat'] : -6.7924;
+        $lng = isset($payload['lng']) ? (float) $payload['lng'] : 39.2083;
+
+        if ($name === '') {
+            gps_respond(['error' => 'Vehicle name is required.'], 400);
+        }
+
+        $code = gps_create_code('V');
+        $pdo->prepare(
+            'INSERT INTO vehicles (vehicle_code, user_id, name, status, speed, fuel_level, battery_level, driver_name, location_label, latitude, longitude, vehicle_type, last_ping_at)
+             VALUES (?, ?, ?, ?, 0, 100, 100, ?, ?, ?, ?, ?, NOW())'
+        )->execute([$code, (int) $user['id'], $name, 'idle', $driver, $location, $lat, $lng, $type]);
+
+        gps_record_audit($pdo, $user, 'Vehicle Created', $code, 'device', 'low', 'Created vehicle ' . $name);
+        gps_respond(['success' => true, 'vehicles' => gps_vehicle_rows($pdo, (int) $user['id'])], 201);
+    }
+
+    if (gps_method() === 'PUT' && $vehicleId !== '') {
+        $payload = gps_json_input();
+        $vehicle = $pdo->prepare('SELECT * FROM vehicles WHERE vehicle_code = ? AND user_id = ?');
+        $vehicle->execute([$vehicleId, (int) $user['id']]);
+        $row = $vehicle->fetch();
+
+        if (!$row && $user['role'] === 'admin') {
+            $vehicle = $pdo->prepare('SELECT * FROM vehicles WHERE vehicle_code = ?');
+            $vehicle->execute([$vehicleId]);
+            $row = $vehicle->fetch();
+        }
+
+        if (!$row) {
+            gps_respond(['error' => 'Vehicle not found.'], 404);
+        }
+
+        $name = trim((string) ($payload['name'] ?? $row['name']));
+        $driver = trim((string) ($payload['driver'] ?? $row['driver_name']));
+        $type = trim((string) ($payload['type'] ?? $row['vehicle_type']));
+        $status = trim((string) ($payload['status'] ?? $row['status']));
+        $location = trim((string) ($payload['location'] ?? $row['location_label']));
+
+        if (!in_array($status, ['active', 'idle', 'maintenance'], true)) {
+            $status = $row['status'];
+        }
+
+        $pdo->prepare(
+            'UPDATE vehicles SET name = ?, driver_name = ?, vehicle_type = ?, status = ?, location_label = ? WHERE id = ?'
+        )->execute([$name, $driver, $type, $status, $location, (int) $row['id']]);
+
+        gps_record_audit($pdo, $user, 'Vehicle Updated', $vehicleId, 'device', 'low', 'Updated vehicle ' . $name);
+        gps_respond(['success' => true, 'vehicles' => gps_vehicle_rows($pdo, (int) $row['user_id'])]);
+    }
+
+    if (gps_method() === 'DELETE' && $vehicleId !== '') {
+        $vehicle = $pdo->prepare('SELECT * FROM vehicles WHERE vehicle_code = ? AND user_id = ?');
+        $vehicle->execute([$vehicleId, (int) $user['id']]);
+        $row = $vehicle->fetch();
+
+        if (!$row && $user['role'] === 'admin') {
+            $vehicle = $pdo->prepare('SELECT * FROM vehicles WHERE vehicle_code = ?');
+            $vehicle->execute([$vehicleId]);
+            $row = $vehicle->fetch();
+        }
+
+        if (!$row) {
+            gps_respond(['error' => 'Vehicle not found.'], 404);
+        }
+
+        $pdo->prepare('DELETE FROM vehicles WHERE id = ?')->execute([(int) $row['id']]);
+        gps_record_audit($pdo, $user, 'Vehicle Deleted', $vehicleId, 'device', 'medium', 'Deleted vehicle ' . $row['name']);
+        gps_respond(['success' => true]);
+    }
+
+    gps_respond(['error' => 'Invalid request.'], 400);
+}
+
+function gps_handle_geofence_single(PDO $pdo): void
+{
+    $user = gps_require_auth($pdo);
+    $geofenceId = isset($_GET['id']) ? trim((string) $_GET['id']) : '';
+
+    if ($geofenceId === '') {
+        gps_respond(['error' => 'Geofence ID required.'], 400);
+    }
+
+    if (gps_method() === 'PUT') {
+        $payload = gps_json_input();
+        $gf = $pdo->prepare('SELECT * FROM geofences WHERE geofence_code = ? AND user_id = ?');
+        $gf->execute([$geofenceId, (int) $user['id']]);
+        $row = $gf->fetch();
+
+        if (!$row) {
+            gps_respond(['error' => 'Geofence not found.'], 404);
+        }
+
+        $name = trim((string) ($payload['name'] ?? $row['name']));
+        $status = trim((string) ($payload['status'] ?? $row['status']));
+        $radius = isset($payload['radiusMeters']) ? max(50, (int) $payload['radiusMeters']) : (int) $row['radius_meters'];
+        $color = trim((string) ($payload['color'] ?? $row['color']));
+        $lat = isset($payload['latitude']) ? (float) $payload['latitude'] : (float) $row['latitude'];
+        $lng = isset($payload['longitude']) ? (float) $payload['longitude'] : (float) $row['longitude'];
+
+        if (!in_array($status, ['active', 'inactive'], true)) {
+            $status = $row['status'];
+        }
+
+        $pdo->prepare(
+            'UPDATE geofences SET name = ?, status = ?, radius_meters = ?, color = ?, latitude = ?, longitude = ? WHERE id = ?'
+        )->execute([$name, $status, $radius, $color, $lat, $lng, (int) $row['id']]);
+
+        gps_record_audit($pdo, $user, 'Geofence Updated', $geofenceId, 'config', 'low', 'Updated geofence ' . $name);
+        gps_respond(['success' => true, 'geofences' => gps_geofence_rows($pdo, (int) $user['id'])]);
+    }
+
+    if (gps_method() === 'DELETE') {
+        $gf = $pdo->prepare('SELECT * FROM geofences WHERE geofence_code = ? AND user_id = ?');
+        $gf->execute([$geofenceId, (int) $user['id']]);
+        $row = $gf->fetch();
+
+        if (!$row) {
+            gps_respond(['error' => 'Geofence not found.'], 404);
+        }
+
+        $pdo->prepare('DELETE FROM geofences WHERE id = ?')->execute([(int) $row['id']]);
+        gps_record_audit($pdo, $user, 'Geofence Deleted', $geofenceId, 'config', 'medium', 'Deleted geofence ' . $row['name']);
+        gps_respond(['success' => true, 'geofences' => gps_geofence_rows($pdo, (int) $user['id'])]);
+    }
+
+    gps_respond(['error' => 'Unsupported method.'], 405);
+}
+
+function gps_handle_preferences(PDO $pdo): void
+{
+    $user = gps_require_auth($pdo);
+    $userId = (int) $user['id'];
+
+    if (gps_method() === 'GET') {
+        $stmt = $pdo->prepare('SELECT * FROM notification_preferences WHERE user_id = ?');
+        $stmt->execute([$userId]);
+        $prefs = $stmt->fetch();
+
+        if (!$prefs) {
+            $prefs = [
+                'email_alerts' => 1, 'sms_alerts' => 0, 'push_alerts' => 1,
+                'speed_alerts' => 1, 'geofence_alerts' => 1, 'maintenance_alerts' => 1, 'fuel_alerts' => 0,
+            ];
+        }
+
+        gps_respond([
+            'success' => true,
+            'preferences' => [
+                'emailAlerts' => (bool) $prefs['email_alerts'],
+                'smsAlerts' => (bool) $prefs['sms_alerts'],
+                'pushAlerts' => (bool) $prefs['push_alerts'],
+                'speedAlerts' => (bool) $prefs['speed_alerts'],
+                'geofenceAlerts' => (bool) $prefs['geofence_alerts'],
+                'maintenanceAlerts' => (bool) $prefs['maintenance_alerts'],
+                'fuelAlerts' => (bool) $prefs['fuel_alerts'],
+            ],
+        ]);
+    }
+
+    if (gps_method() === 'PUT') {
+        $payload = gps_json_input();
+        $boolVal = static function ($key, $default) use ($payload): int {
+            return isset($payload[$key]) ? ($payload[$key] ? 1 : 0) : ($default ? 1 : 0);
+        };
+
+        $existing = $pdo->prepare('SELECT id FROM notification_preferences WHERE user_id = ?');
+        $existing->execute([$userId]);
+
+        if ($existing->fetch()) {
+            $pdo->prepare(
+                'UPDATE notification_preferences SET email_alerts=?, sms_alerts=?, push_alerts=?, speed_alerts=?, geofence_alerts=?, maintenance_alerts=?, fuel_alerts=?, updated_at=NOW() WHERE user_id=?'
+            )->execute([
+                $boolVal('emailAlerts', true), $boolVal('smsAlerts', false), $boolVal('pushAlerts', true),
+                $boolVal('speedAlerts', true), $boolVal('geofenceAlerts', true), $boolVal('maintenanceAlerts', true),
+                $boolVal('fuelAlerts', false), $userId,
+            ]);
+        } else {
+            $pdo->prepare(
+                'INSERT INTO notification_preferences (user_id, email_alerts, sms_alerts, push_alerts, speed_alerts, geofence_alerts, maintenance_alerts, fuel_alerts) VALUES (?,?,?,?,?,?,?,?)'
+            )->execute([
+                $userId,
+                $boolVal('emailAlerts', true), $boolVal('smsAlerts', false), $boolVal('pushAlerts', true),
+                $boolVal('speedAlerts', true), $boolVal('geofenceAlerts', true), $boolVal('maintenanceAlerts', true),
+                $boolVal('fuelAlerts', false),
+            ]);
+        }
+
+        gps_record_audit($pdo, $user, 'Preferences Updated', $user['email'], 'user', 'low', 'Updated notification preferences');
+        gps_respond(['success' => true]);
+    }
+
+    gps_respond(['error' => 'Unsupported method.'], 405);
+}
+
+function gps_handle_export_report(PDO $pdo): void
+{
+    gps_require_method(['GET']);
+    $user = gps_require_auth($pdo);
+
+    $reportId = isset($_GET['id']) ? trim((string) $_GET['id']) : '';
+    $format = isset($_GET['format']) ? trim((string) $_GET['format']) : 'csv';
+
+    if ($reportId === 'all') {
+        $stmt = $pdo->prepare('SELECT * FROM reports WHERE user_id = ? ORDER BY report_date DESC');
+        $stmt->execute([(int) $user['id']]);
+    } else {
+        $stmt = $pdo->prepare('SELECT * FROM reports WHERE report_code = ? AND user_id = ?');
+        $stmt->execute([$reportId, (int) $user['id']]);
+    }
+
+    $rows = $stmt->fetchAll();
+
+    if (empty($rows)) {
+        gps_respond(['error' => 'No reports found.'], 404);
+    }
+
+    $csvData = "Report,Type,Date,Trips,Distance(mi),Fuel(gal),Avg Speed,Active Hours,Status\n";
+    foreach ($rows as $row) {
+        $csvData .= sprintf(
+            "\"%s\",\"%s\",\"%s\",%d,%d,%d,%d,%d,\"%s\"\n",
+            $row['name'], $row['type'], $row['report_date'],
+            $row['trip_count'], $row['distance_miles'], $row['fuel_gallons'],
+            $row['avg_speed'], $row['active_hours'], $row['status']
+        );
+    }
+
+    gps_record_audit($pdo, $user, 'Report Exported', $reportId, 'reports', 'low', 'Exported report data as ' . $format);
+
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="crestech-report-' . date('Y-m-d') . '.csv"');
+    echo $csvData;
+    exit;
+}
+
+/* Update profile handler to read real notification preferences */
+
 function gps_seed_defaults(PDO $pdo): void
 {
     $admin = gps_seed_user($pdo, [
-        'name' => 'Sarah Mitchell',
+        'name' => 'Mussa Aziz',
         'email' => 'admin@crestech.co.tz',
         'password' => 'admin123',
         'role' => 'admin',
         'company' => 'CRESTECH',
         'plan' => 'Enterprise',
-        'phone' => '+1 (555) 000-0001',
-        'timezone' => 'America/New_York',
+        'phone' => '+255 712 000 001',
+        'timezone' => 'Africa/Dar_es_Salaam',
         'status' => 'active',
-        'avatar' => '/images/person-woman-4.jpg',
+        'avatar' => '/images/person-businessman.jpg',
     ]);
 
     $user = gps_seed_user($pdo, [
-        'name' => 'John Anderson',
+        'name' => 'Demo User',
         'email' => 'user@crestech.co.tz',
         'password' => 'user123',
         'role' => 'user',
-        'company' => 'CRESTECH',
+        'company' => 'CRESTECH Demo',
         'plan' => 'Professional',
-        'phone' => '+1 (555) 000-0002',
-        'timezone' => 'America/New_York',
+        'phone' => '+255 712 000 002',
+        'timezone' => 'Africa/Dar_es_Salaam',
         'status' => 'active',
         'avatar' => '/images/person-man-2.jpg',
     ]);
@@ -1357,14 +1841,14 @@ function gps_seed_user_assets(PDO $pdo, array $user): void
         $countVehicles->execute([(int) $user['id']]);
     if ((int) $countVehicles->fetchColumn() === 0) {
         $vehicleSeed = [
-            ['Truck Alpha', 'active', 62, 78, 95, 'Mike Ross', 'Highway I-95, NJ', 40.7128, -74.0060, 'GPS Tracker Pro', '-5 minutes'],
-            ['Van Beta', 'active', 45, 54, 88, 'Lisa Chen', 'Route 66, AZ', 35.1983, -111.6513, 'GPS Tracker Pro', '-12 minutes'],
-            ['Truck Gamma', 'idle', 0, 92, 100, 'Sam Patel', 'Depot A, Houston TX', 29.7604, -95.3698, 'GPS Mini', '-2 hours'],
-            ['Sedan Delta', 'active', 38, 31, 72, 'Amy Woods', 'I-10 Freeway, LA', 34.0522, -118.2437, 'OBD Connector', '-3 minutes'],
-            ['Van Epsilon', 'maintenance', 0, 65, 45, 'Dan Kim', 'Service Center, Dallas', 32.7767, -96.7970, 'GPS Tracker Pro', '-1 day'],
-            ['Truck Zeta', 'active', 71, 43, 90, 'Rob Taylor', 'I-80 East, PA', 41.2033, -77.1945, 'GPS Tracker Pro', '-7 minutes'],
-            ['SUV Eta', 'active', 55, 67, 81, 'Jen Parker', 'I-75 North, FL', 27.6648, -81.5158, 'OBD Connector', '-9 minutes'],
-            ['Truck Theta', 'idle', 0, 84, 63, 'Carl Weber', 'Depot B, Chicago IL', 41.8781, -87.6298, 'GPS Mini', '-45 minutes'],
+            ['Truck Alpha', 'active', 62, 78, 95, 'Juma Hassan', 'Bagamoyo Road, Dar es Salaam', -6.7924, 39.2083, 'GPS Tracker Pro', '-5 minutes'],
+            ['Van Beta', 'active', 45, 54, 88, 'Amina Salim', 'Nyerere Road, Dar es Salaam', -6.8160, 39.2803, 'GPS Tracker Pro', '-12 minutes'],
+            ['Truck Gamma', 'idle', 0, 92, 100, 'Said Abdallah', 'Kariakoo Depot, Dar es Salaam', -6.8235, 39.2695, 'GPS Mini', '-2 hours'],
+            ['Sedan Delta', 'active', 38, 31, 72, 'Grace Mwita', 'Ali Hassan Mwinyi Rd, DSM', -6.7731, 39.2640, 'OBD Connector', '-3 minutes'],
+            ['Van Epsilon', 'maintenance', 0, 65, 45, 'Daniel Komba', 'Service Center, Arusha', -3.3869, 36.6830, 'GPS Tracker Pro', '-1 day'],
+            ['Truck Zeta', 'active', 71, 43, 90, 'Rashid Mfaume', 'Morogoro Road, Dodoma', -6.1630, 35.7516, 'GPS Tracker Pro', '-7 minutes'],
+            ['SUV Eta', 'active', 55, 67, 81, 'Fatma Omar', 'Samora Avenue, Dar es Salaam', -6.8183, 39.2913, 'OBD Connector', '-9 minutes'],
+            ['Truck Theta', 'idle', 0, 84, 63, 'James Mbwambo', 'Port Depot, Dar es Salaam', -6.8427, 39.2930, 'GPS Mini', '-45 minutes'],
         ];
 
         $insert = $pdo->prepare(
@@ -1396,12 +1880,12 @@ function gps_seed_user_assets(PDO $pdo, array $user): void
     $countZones->execute([(int) $user['id']]);
     if ((int) $countZones->fetchColumn() === 0) {
         $zones = [
-            ['Main Depot Zone', 'circle', 'active', 3, 500, '#eab308', 12, 40.7357, -74.1724],
-            ['Downtown Restricted', 'polygon', 'active', 8, 300, '#ef4444', 5, 40.7580, -73.9855],
-            ['Warehouse District', 'rectangle', 'active', 1, 400, '#f59e0b', 8, 29.7436, -95.3644],
-            ['School Zone Alpha', 'circle', 'active', 12, 200, '#f59e0b', 3, 34.0522, -118.2437],
-            ['Highway Corridor', 'polygon', 'inactive', 0, 600, '#8b5cf6', 0, 41.2033, -77.1945],
-            ['Client Site - Acme', 'circle', 'active', 2, 300, '#06b6d4', 4, 32.7767, -96.7970],
+            ['Main Depot Zone', 'circle', 'active', 3, 500, '#eab308', 12, -6.7924, 39.2083],
+            ['Kariakoo Restricted', 'polygon', 'active', 8, 300, '#ef4444', 5, -6.8235, 39.2695],
+            ['Port Area', 'rectangle', 'active', 1, 400, '#f59e0b', 8, -6.8427, 39.2930],
+            ['School Zone Kinondoni', 'circle', 'active', 12, 200, '#f59e0b', 3, -6.7731, 39.2640],
+            ['Morogoro Highway', 'polygon', 'inactive', 0, 600, '#8b5cf6', 0, -6.1630, 35.7516],
+            ['Arusha Service Center', 'circle', 'active', 2, 300, '#06b6d4', 4, -3.3869, 36.6830],
         ];
 
         $insert = $pdo->prepare(

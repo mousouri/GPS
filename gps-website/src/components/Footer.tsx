@@ -104,8 +104,8 @@ export default function Footer() {
               <BrandMark className="h-10 w-auto rounded-xl" />
             </Link>
             <p className="text-sm text-gray-400 mb-6 max-w-xs">
-              Advanced GPS tracking solutions for businesses and individuals. 
-              Track everything, anywhere, anytime.
+              Tanzania's trusted GPS tracking and IoT solutions provider since 2023. 
+              Track vehicles, assets, and personnel across East Africa.
             </p>
             <div className="flex items-center gap-3">
               {socialLinks.map((social) => (

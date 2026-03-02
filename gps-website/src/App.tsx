@@ -36,6 +36,8 @@ import GeofencePage from './pages/GeofencePage';
 
 // Admin Pages
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminUsersPage from './pages/AdminUsersPage';
+import AdminDevicesPage from './pages/AdminDevicesPage';
 import AdminUserDetailPage from './pages/AdminUserDetailPage';
 import AdminBillingPage from './pages/AdminBillingPage';
 import AdminAuditLogPage from './pages/AdminAuditLogPage';
@@ -86,7 +88,9 @@ function AnimatedRoutes() {
 
         {/* Protected: Admin Pages */}
         <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="admin"><AdminDashboardPage /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute requiredRole="admin"><AdminUsersPage /></ProtectedRoute>} />
         <Route path="/admin/users/:id" element={<ProtectedRoute requiredRole="admin"><AdminUserDetailPage /></ProtectedRoute>} />
+        <Route path="/admin/devices" element={<ProtectedRoute requiredRole="admin"><AdminDevicesPage /></ProtectedRoute>} />
         <Route path="/admin/billing" element={<ProtectedRoute requiredRole="admin"><AdminBillingPage /></ProtectedRoute>} />
         <Route path="/admin/audit-log" element={<ProtectedRoute requiredRole="admin"><AdminAuditLogPage /></ProtectedRoute>} />
 

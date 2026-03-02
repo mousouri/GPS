@@ -3,12 +3,12 @@ import { useRef } from 'react';
 import { Target, Eye, Award, TrendingUp, Users, Globe } from 'lucide-react';
 
 const milestones = [
-  { year: '2015', event: 'Founded in Silicon Valley with a vision for smarter tracking' },
-  { year: '2017', event: 'Reached 10,000 active devices globally' },
-  { year: '2019', event: 'Launched enterprise fleet management platform' },
-  { year: '2021', event: 'Expanded to 80+ countries with multi-language support' },
-  { year: '2023', event: 'AI-powered predictive analytics introduced' },
-  { year: '2025', event: '50,000+ devices tracked across 120+ countries' },
+  { year: '2023', event: 'Founded in Dar es Salaam, Tanzania with a mission to provide smart GPS tracking across East Africa' },
+  { year: '2023', event: 'Launched first fleet management platform tailored for Tanzanian businesses' },
+  { year: '2024', event: 'Reached 5,000+ active devices tracked across Tanzania and East Africa' },
+  { year: '2024', event: 'Introduced real-time alerts, geofencing, and fuel monitoring features' },
+  { year: '2025', event: 'Expanded services to Kenya, Uganda, and Rwanda' },
+  { year: '2026', event: '10,000+ devices deployed, serving 500+ businesses across East Africa' },
 ];
 
 const values = [
@@ -73,8 +73,8 @@ export default function About() {
               </div>
               <p className="text-gray-400 leading-relaxed">
                 To provide the most reliable, accurate, and accessible GPS tracking solutions 
-                that help businesses optimize operations, protect assets, and ensure safety — 
-                all while delivering an exceptional user experience.
+                for Tanzania and East Africa — helping businesses optimize operations, protect assets, 
+                and ensure safety with locally supported, world-class technology.
               </p>
             </motion.div>
 
@@ -92,9 +92,10 @@ export default function About() {
                 <h3 className="text-xl font-bold">Our Team</h3>
               </div>
               <p className="text-gray-400 leading-relaxed">
-                Our team of 200+ engineers, designers, and support specialists work around the clock 
-                to deliver the best tracking experience. From satellite engineers to customer success managers, 
-                every member is dedicated to your success.
+                Our growing team of dedicated engineers, designers, and support specialists based in 
+                Dar es Salaam work passionately to deliver the best tracking experience. Since our founding 
+                in 2023, every team member has been committed to empowering Tanzanian businesses with 
+                reliable GPS solutions.
               </p>
             </motion.div>
 
@@ -165,9 +166,9 @@ export default function About() {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { value: '10+', label: 'Years of Experience' },
-              { value: '50K+', label: 'Devices Deployed' },
-              { value: '200+', label: 'Team Members' },
+              { value: '3+', label: 'Years Since 2023' },
+              { value: '10K+', label: 'Devices Deployed' },
+              { value: '50+', label: 'Team Members' },
               { value: '98%', label: 'Client Retention' },
             ].map((stat, idx) => (
               <motion.div

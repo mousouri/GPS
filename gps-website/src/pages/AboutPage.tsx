@@ -3,12 +3,12 @@ import { useRef } from 'react';
 import { Target, Eye, Award, TrendingUp, Globe, Users } from 'lucide-react';
 
 const milestones = [
-  { year: '2015', event: 'Founded in Silicon Valley with a vision for smarter tracking' },
-  { year: '2017', event: 'Reached 10,000 active devices globally' },
-  { year: '2019', event: 'Launched enterprise fleet management platform' },
-  { year: '2021', event: 'Expanded to 80+ countries with multi-language support' },
-  { year: '2023', event: 'AI-powered predictive analytics introduced' },
-  { year: '2025', event: '50,000+ devices tracked across 120+ countries' },
+  { year: '2023', event: 'Founded in Dar es Salaam, Tanzania with a mission to provide smart GPS tracking across East Africa' },
+  { year: '2023', event: 'Launched first fleet management platform tailored for Tanzanian businesses' },
+  { year: '2024', event: 'Reached 5,000+ active devices tracked across Tanzania and East Africa' },
+  { year: '2024', event: 'Introduced real-time alerts, geofencing, and fuel monitoring features' },
+  { year: '2025', event: 'Expanded services to Kenya, Uganda, and Rwanda' },
+  { year: '2026', event: '10,000+ devices deployed, serving 500+ businesses across East Africa' },
 ];
 
 const values = [
@@ -20,28 +20,28 @@ const values = [
 
 const team = [
   {
-    name: 'Alex Rivera',
+    name: 'CEO & Founder',
     role: 'CEO & Founder',
     image: '/images/person-businessman.jpg',
-    bio: '15+ years in GPS technology and fleet management.',
+    bio: 'Visionary leader who founded CRESTECH in 2023 to bring smart GPS tracking to Tanzania.',
   },
   {
-    name: 'Sarah Chen',
+    name: 'Head of Technology',
     role: 'CTO',
     image: '/images/person-woman-1.jpg',
-    bio: 'Former Google engineer, satellite systems expert.',
+    bio: 'Expert in IoT and satellite systems, driving innovation for East Africa.',
   },
   {
-    name: 'Marcus Johnson',
-    role: 'VP of Engineering',
+    name: 'Operations Manager',
+    role: 'VP of Operations',
     image: '/images/person-man-2.jpg',
-    bio: 'Built tracking systems for Fortune 500 companies.',
+    bio: 'Ensures seamless GPS tracking services across Tanzania and beyond.',
   },
   {
-    name: 'Emily Park',
-    role: 'Head of Product',
+    name: 'Customer Success Lead',
+    role: 'Head of Customer Success',
     image: '/images/person-woman-2.jpg',
-    bio: 'Passionate about intuitive user experiences.',
+    bio: 'Passionate about delivering outstanding local support to every client.',
   },
 ];
 
@@ -55,8 +55,8 @@ export default function AboutPage() {
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="/images/modern-office.jpg"
-            alt="About Us"
+            src="/images/dar-es-salaam-skyline.jpg"
+            alt="Dar es Salaam, Tanzania"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-dark-950/85" />
@@ -94,8 +94,8 @@ export default function AboutPage() {
               viewport={{ once: true }}
             >
               <img
-                src="/images/teamwork.jpg"
-                alt="Our Team Working"
+                src="/images/tanzania-city.jpg"
+                alt="CRESTECH Operations in Dar es Salaam"
                 className="rounded-3xl shadow-2xl shadow-primary-500/10 border border-white/10"
               />
             </motion.div>
@@ -109,23 +109,24 @@ export default function AboutPage() {
                 <span className="gradient-text">Story</span>
               </h2>
               <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                Founded in 2015, CRESTECH started with a simple mission: make GPS tracking 
-                accessible, accurate, and affordable for everyone. What began as a small startup 
-                in Silicon Valley has grown into a global platform serving thousands of businesses 
-                across 120+ countries.
+                Founded in 2023 in Dar es Salaam, Tanzania, CRESTECH started with a simple mission: 
+                make GPS tracking accessible, accurate, and affordable for Tanzanian businesses and 
+                individuals. What began as a small startup in Tanzania's commercial capital has quickly 
+                grown into a trusted platform serving hundreds of businesses across East Africa.
               </p>
               <p className="text-gray-400 text-lg leading-relaxed mb-8">
-                Our team of 200+ engineers, designers, and support specialists work around the clock 
-                to deliver the best tracking experience. From satellite engineers to customer success 
-                managers, every member is dedicated to your success.
+                Our dedicated team of engineers, designers, and support specialists based in 
+                Dar es Salaam work passionately to deliver the best tracking experience. With deep 
+                local knowledge and commitment to East African businesses, every team member is 
+                dedicated to your success.
               </p>
               <div className="grid grid-cols-2 gap-6">
                 <div className="glass rounded-2xl p-5 text-center">
-                  <div className="text-3xl font-bold gradient-text mb-1">10+</div>
-                  <div className="text-sm text-gray-400">Years Experience</div>
+                  <div className="text-3xl font-bold gradient-text mb-1">3+</div>
+                  <div className="text-sm text-gray-400">Years Since 2023</div>
                 </div>
                 <div className="glass rounded-2xl p-5 text-center">
-                  <div className="text-3xl font-bold gradient-text mb-1">200+</div>
+                  <div className="text-3xl font-bold gradient-text mb-1">50+</div>
                   <div className="text-sm text-gray-400">Team Members</div>
                 </div>
               </div>
@@ -145,8 +146,8 @@ export default function AboutPage() {
               className="relative glass rounded-3xl overflow-hidden group"
             >
               <img
-                src="/images/earth-night.jpg"
-                alt="Our Mission"
+                src="/images/kilimanjaro.jpg"
+                alt="Mount Kilimanjaro, Tanzania"
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="p-8">
@@ -157,9 +158,9 @@ export default function AboutPage() {
                   <h3 className="text-xl font-bold">Our Mission</h3>
                 </div>
                 <p className="text-gray-400 leading-relaxed">
-                  To provide the most reliable, accurate, and accessible GPS tracking solutions for Tanzania and East Africa. 
+                  To provide the most reliable, accurate, and accessible GPS tracking solutions for Tanzania and East Africa 
                   that help businesses optimize operations, protect assets, and ensure safety — 
-                  all while delivering an exceptional user experience.
+                  all while delivering an exceptional user experience with dedicated local support.
                 </p>
               </div>
             </motion.div>
@@ -172,8 +173,8 @@ export default function AboutPage() {
               className="relative glass rounded-3xl overflow-hidden group"
             >
               <img
-                src="/images/office-tech.jpg"
-                alt="Our Vision"
+                src="/images/tanzania-safari.jpg"
+                alt="Tanzania Landscape"
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="p-8">
@@ -321,8 +322,8 @@ export default function AboutPage() {
             className="relative rounded-3xl overflow-hidden"
           >
             <img
-              src="/images/modern-office.jpg"
-              alt="CRESTECH Office"
+              src="/images/tanzania-landscape.jpg"
+              alt="Dar es Salaam, Tanzania - CRESTECH Headquarters"
               className="w-full h-[400px] object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-dark-950/80 via-dark-950/20 to-transparent" />
@@ -340,9 +341,9 @@ export default function AboutPage() {
           <div className="glass rounded-3xl p-8 lg:p-12">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               {[
-                { value: '10+', label: 'Years of Experience' },
-                { value: '50K+', label: 'Devices Deployed' },
-                { value: '200+', label: 'Team Members' },
+                { value: '3+', label: 'Years Since 2023' },
+                { value: '10K+', label: 'Devices Deployed' },
+                { value: '50+', label: 'Team Members' },
                 { value: '98%', label: 'Client Retention' },
               ].map((stat, idx) => (
                 <motion.div

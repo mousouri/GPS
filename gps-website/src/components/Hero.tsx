@@ -86,9 +86,9 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-12 text-balance"
           >
-            Advanced GPS tracking solutions for vehicles, assets, and personnel. 
-            Get real-time location data, route history, and intelligent alerts 
-            — all from one powerful platform.
+            Advanced GPS tracking solutions built for Tanzania and East Africa. 
+            Track vehicles, assets, and personnel with real-time location data, 
+            route history, and intelligent alerts — all from one powerful platform.
           </motion.p>
 
           {/* CTA Buttons */}

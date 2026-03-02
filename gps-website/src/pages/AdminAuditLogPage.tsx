@@ -1,12 +1,12 @@
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft, Shield, Search, ChevronDown, Clock,
   User, Settings, Edit3, LogIn, AlertTriangle,
-  Key, Database, Download, Eye,
+  Key, Database, Download, Eye, ChevronLeft, ChevronRight,
 } from 'lucide-react';
-import { getAdminAuditLogData, type AdminAuditEntry } from '../lib/api';
+import { getAdminAuditLogDataPaginated, getExportReportUrl, type AdminAuditEntry } from '../lib/api';
 
 const categoryIcons: Record<string, typeof User> = {
   user: User,
@@ -31,6 +31,10 @@ export default function AdminAuditLogPage() {
   const [filterSeverity, setFilterSeverity] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalEntries, setTotalEntries] = useState(0);
+  const perPage = 20;
   const [summary, setSummary] = useState({
     totalEvents: 0,
     criticalEvents: 0,
@@ -41,55 +45,41 @@ export default function AdminAuditLogPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadAuditLog() {
-      try {
-        const response = await getAdminAuditLogData();
-        if (!isMounted) {
-          return;
-        }
-        setSummary(response.summary);
-        setEntries(response.entries);
-      } catch (requestError) {
-        if (!isMounted) {
-          return;
-        }
-        setError(requestError instanceof Error ? requestError.message : 'Unable to load audit log.');
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+  const loadPage = useCallback(async (p: number) => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const response = await getAdminAuditLogDataPaginated({ page: p, perPage });
+      setSummary(response.summary);
+      setEntries(response.entries);
+      if (response.pagination) {
+        setPage(response.pagination.page);
+        setTotalPages(response.pagination.totalPages);
+        setTotalEntries(response.pagination.totalEntries ?? 0);
       }
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Unable to load audit log.');
+    } finally {
+      setIsLoading(false);
     }
-
-    loadAuditLog();
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
+
+  useEffect(() => { loadPage(1); }, [loadPage]);
 
   const filtered = useMemo(() => (
     entries.filter((entry) => {
-      if (filterCategory !== 'all' && entry.category !== filterCategory) {
-        return false;
-      }
-      if (filterSeverity !== 'all' && entry.severity !== filterSeverity) {
-        return false;
-      }
-      if (!searchQuery.trim()) {
-        return true;
-      }
-      const query = searchQuery.toLowerCase();
-      return (
-        entry.admin.toLowerCase().includes(query) ||
-        entry.action.toLowerCase().includes(query) ||
-        entry.target.toLowerCase().includes(query)
-      );
+      if (filterCategory !== 'all' && entry.category !== filterCategory) return false;
+      if (filterSeverity !== 'all' && entry.severity !== filterSeverity) return false;
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase();
+      return entry.admin.toLowerCase().includes(q) || entry.action.toLowerCase().includes(q) || entry.target.toLowerCase().includes(q);
     })
   ), [entries, filterCategory, filterSeverity, searchQuery]);
+
+  const handleExport = () => {
+    const url = getExportReportUrl('audit', '7d');
+    window.open(url, '_blank');
+  };
 
   return (
     <div className="min-h-screen bg-dark-950">
@@ -103,7 +93,10 @@ export default function AdminAuditLogPage() {
             <span className="font-semibold text-white">Audit Log</span>
           </div>
         </div>
-        <button className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-gray-300 hover:bg-white/10 transition-colors flex items-center gap-2">
+        <button
+          onClick={handleExport}
+          className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-gray-300 hover:bg-white/10 transition-colors flex items-center gap-2"
+        >
           <Download className="w-4 h-4" />
           Export Log
         </button>
@@ -258,12 +251,40 @@ export default function AdminAuditLogPage() {
           </div>
 
           <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
-            <span className="text-xs text-gray-500">{filtered.length} events shown</span>
-            <div className="flex gap-1">
-              <button className="px-3 py-1.5 bg-white/5 rounded-lg text-xs text-gray-400 hover:bg-white/10 transition-colors">Previous</button>
-              <button className="px-3 py-1.5 bg-primary-500/10 text-primary-400 rounded-lg text-xs font-medium">1</button>
-              <button className="px-3 py-1.5 bg-white/5 rounded-lg text-xs text-gray-400 hover:bg-white/10 transition-colors">2</button>
-              <button className="px-3 py-1.5 bg-white/5 rounded-lg text-xs text-gray-400 hover:bg-white/10 transition-colors">Next</button>
+            <span className="text-xs text-gray-500">
+              Page {page} of {totalPages} ({totalEntries} total events, {filtered.length} shown)
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => loadPage(page - 1)}
+                disabled={page <= 1}
+                className="p-1.5 bg-white/5 rounded-lg text-gray-400 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const start = Math.max(1, Math.min(page - 2, totalPages - 4));
+                const num = start + i;
+                if (num > totalPages) return null;
+                return (
+                  <button
+                    key={num}
+                    onClick={() => loadPage(num)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      page === num ? 'bg-primary-500/10 text-primary-400' : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                    }`}
+                  >
+                    {num}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => loadPage(page + 1)}
+                disabled={page >= totalPages}
+                className="p-1.5 bg-white/5 rounded-lg text-gray-400 hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </motion.div>

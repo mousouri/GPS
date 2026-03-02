@@ -145,7 +145,7 @@ export interface AdminUserDetail {
 }
 
 type ApiOptions = {
-  method?: 'GET' | 'POST' | 'PUT';
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: unknown;
   token?: string | null;
   query?: Record<string, string | number | undefined>;
@@ -156,15 +156,21 @@ export function getStoredToken(): string | null {
     return null;
   }
 
-  return window.localStorage.getItem(SESSION_TOKEN_KEY);
+  return window.localStorage.getItem(SESSION_TOKEN_KEY) || window.sessionStorage.getItem(SESSION_TOKEN_KEY);
 }
 
-export function setStoredToken(token: string): void {
+export function setStoredToken(token: string, remember = true): void {
   if (typeof window === 'undefined') {
     return;
   }
 
-  window.localStorage.setItem(SESSION_TOKEN_KEY, token);
+  if (remember) {
+    window.localStorage.setItem(SESSION_TOKEN_KEY, token);
+    window.sessionStorage.removeItem(SESSION_TOKEN_KEY);
+  } else {
+    window.sessionStorage.setItem(SESSION_TOKEN_KEY, token);
+    window.localStorage.removeItem(SESSION_TOKEN_KEY);
+  }
 }
 
 export function clearStoredToken(): void {
@@ -173,6 +179,7 @@ export function clearStoredToken(): void {
   }
 
   window.localStorage.removeItem(SESSION_TOKEN_KEY);
+  window.sessionStorage.removeItem(SESSION_TOKEN_KEY);
 }
 
 async function apiRequest<T>(action: string, options: ApiOptions = {}): Promise<T> {
@@ -552,4 +559,271 @@ export function buildEmbeddedMapUrl(lat: number, lng: number): string {
 
 export function buildOpenMapLink(lat: number, lng: number): string {
   return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=10/${lat}/${lng}`;
+}
+
+/* ========================
+   NEW API FUNCTIONS
+   ======================== */
+
+type ApiOptions2 = ApiOptions & { method?: 'GET' | 'POST' | 'PUT' | 'DELETE' };
+
+async function apiRequest2<T>(action: string, options: ApiOptions2 = {}): Promise<T> {
+  const url = new URL(apiEndpoint, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
+  url.searchParams.set('action', action);
+
+  if (options.query) {
+    Object.entries(options.query).forEach(([key, value]) => {
+      if (value !== undefined) {
+        url.searchParams.set(key, String(value));
+      }
+    });
+  }
+
+  const headers = new Headers();
+  headers.set('Content-Type', 'application/json');
+
+  const token = options.token ?? getStoredToken();
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  const response = await fetch(url.toString(), {
+    method: options.method ?? 'GET',
+    headers,
+    body: options.body === undefined ? undefined : JSON.stringify(options.body),
+  });
+
+  const text = await response.text();
+  let data: { error?: string } = {};
+
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    throw new Error(typeof data.error === 'string' ? data.error : 'Request failed.');
+  }
+
+  return data as T;
+}
+
+/* Admin Users List */
+export interface AdminUserListItem {
+  id: string;
+  name: string;
+  email: string;
+  company: string;
+  plan: string;
+  status: string;
+  phone: string;
+  devices: number;
+  revenue: string;
+  avatar: string;
+  joinDate: string;
+  lastLogin: string;
+}
+
+export interface PaginationInfo {
+  page: number;
+  perPage: number;
+  totalUsers?: number;
+  totalPages: number;
+  totalDevices?: number;
+  totalEvents?: number;
+  totalEntries?: number;
+}
+
+export async function getAdminUsers(params?: {
+  page?: number;
+  perPage?: number;
+  search?: string;
+  status?: string;
+  plan?: string;
+}): Promise<{ users: AdminUserListItem[]; pagination: PaginationInfo }> {
+  return apiRequest<{ success: boolean; users: AdminUserListItem[]; pagination: PaginationInfo }>('admin_users', {
+    query: {
+      page: params?.page,
+      per_page: params?.perPage,
+      search: params?.search || undefined,
+      status: params?.status || undefined,
+      plan: params?.plan || undefined,
+    },
+  });
+}
+
+/* Admin Devices */
+export interface AdminDevice {
+  id: string;
+  name: string;
+  status: 'active' | 'idle' | 'maintenance';
+  speed: number;
+  fuel: number;
+  battery: number;
+  driver: string;
+  location: string;
+  lat: number;
+  lng: number;
+  type: string;
+  lastPingAt: string;
+  owner: string;
+  ownerEmail: string;
+}
+
+export async function getAdminDevices(params?: {
+  page?: number;
+  perPage?: number;
+  search?: string;
+  status?: string;
+}): Promise<{
+  devices: AdminDevice[];
+  stats: { total: number; active: number; idle: number; maintenance: number };
+  pagination: PaginationInfo;
+}> {
+  return apiRequest<{
+    success: boolean;
+    devices: AdminDevice[];
+    stats: { total: number; active: number; idle: number; maintenance: number };
+    pagination: PaginationInfo;
+  }>('admin_devices', {
+    query: {
+      page: params?.page,
+      per_page: params?.perPage,
+      search: params?.search || undefined,
+      status: params?.status || undefined,
+    },
+  });
+}
+
+/* Vehicle CRUD */
+export async function createVehicle(input: {
+  name: string;
+  driver?: string;
+  type?: string;
+  location?: string;
+  lat?: number;
+  lng?: number;
+}): Promise<Vehicle[]> {
+  const response = await apiRequest<{ success: boolean; vehicles: Vehicle[] }>('vehicle', {
+    method: 'POST',
+    body: input,
+  });
+  return response.vehicles;
+}
+
+export async function updateVehicle(id: string, input: {
+  name?: string;
+  driver?: string;
+  type?: string;
+  status?: string;
+  location?: string;
+}): Promise<Vehicle[]> {
+  const response = await apiRequest2<{ success: boolean; vehicles: Vehicle[] }>('vehicle', {
+    method: 'PUT',
+    query: { id },
+    body: input,
+  });
+  return response.vehicles;
+}
+
+export async function deleteVehicle(id: string): Promise<void> {
+  await apiRequest2<{ success: boolean }>('vehicle', {
+    method: 'DELETE',
+    query: { id },
+  });
+}
+
+/* Geofence Update/Delete */
+export async function updateGeofence(id: string, input: {
+  name?: string;
+  type?: string;
+  status?: string;
+  radiusMeters?: number;
+  color?: string;
+  latitude?: number;
+  longitude?: number;
+}): Promise<Geofence[]> {
+  const response = await apiRequest2<{ success: boolean; geofences: Geofence[] }>('geofence', {
+    method: 'PUT',
+    query: { id },
+    body: input,
+  });
+  return response.geofences;
+}
+
+export async function deleteGeofence(id: string): Promise<Geofence[]> {
+  const response = await apiRequest2<{ success: boolean; geofences: Geofence[] }>('geofence', {
+    method: 'DELETE',
+    query: { id },
+  });
+  return response.geofences;
+}
+
+/* Notification preferences */
+export interface NotificationPreferences {
+  emailAlerts: boolean;
+  smsAlerts: boolean;
+  pushAlerts: boolean;
+  speedAlerts: boolean;
+  geofenceAlerts: boolean;
+  maintenanceAlerts: boolean;
+  fuelAlerts: boolean;
+}
+
+export async function getNotificationPreferences(): Promise<NotificationPreferences> {
+  const response = await apiRequest<{ success: boolean; preferences: NotificationPreferences }>('preferences');
+  return response.preferences;
+}
+
+export async function updateNotificationPreferences(prefs: NotificationPreferences): Promise<void> {
+  await apiRequest<{ success: boolean }>('preferences', {
+    method: 'PUT',
+    body: prefs,
+  });
+}
+
+/* Export report */
+export function getExportReportUrl(reportId: string, format: string = 'csv'): string {
+  const token = getStoredToken();
+  const url = new URL(apiEndpoint, window.location.origin);
+  url.searchParams.set('action', 'export_report');
+  url.searchParams.set('id', reportId);
+  url.searchParams.set('format', format);
+  if (token) {
+    url.searchParams.set('token', token);
+  }
+  return url.toString();
+}
+
+/* Audit log with pagination */
+export async function getAdminAuditLogDataPaginated(params?: {
+  page?: number;
+  perPage?: number;
+}): Promise<{
+  summary: {
+    totalEvents: number;
+    criticalEvents: number;
+    adminActions: number;
+    systemEvents: number;
+  };
+  entries: AdminAuditEntry[];
+  pagination: PaginationInfo;
+}> {
+  return apiRequest<{
+    success: boolean;
+    summary: {
+      totalEvents: number;
+      criticalEvents: number;
+      adminActions: number;
+      systemEvents: number;
+    };
+    entries: AdminAuditEntry[];
+    pagination: PaginationInfo;
+  }>('admin_audit_log', {
+    query: {
+      page: params?.page,
+      per_page: params?.perPage,
+    },
+  });
 }

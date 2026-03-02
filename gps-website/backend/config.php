@@ -13,8 +13,8 @@ function gps_env(string $key, string $default): string
 
 $host = gps_env('GPS_DB_HOST', '127.0.0.1');
 $db = gps_env('GPS_DB_NAME', 'crestech_db');
-$dbUser = gps_env('GPS_DB_USER', 'crestech_user');
-$dbPass = gps_env('GPS_DB_PASS', 'Crestech@12345');
+$dbUser = gps_env('GPS_DB_USER', 'root');
+$dbPass = gps_env('GPS_DB_PASS', '');
 $charset = gps_env('GPS_DB_CHARSET', 'utf8mb4');
 
 $dsn = sprintf('mysql:host=%s;dbname=%s;charset=%s', $host, $db, $charset);

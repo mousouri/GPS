@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { changePasswordRequest, getProfileData, updateProfileRequest } from '../lib/api';
+import { changePasswordRequest, getProfileData, updateProfileRequest, updateNotificationPreferences } from '../lib/api';
 import BrandMark from '../components/BrandMark';
 import {
   ArrowLeft, User, Mail, Building2, Camera,
@@ -84,6 +84,17 @@ export default function ProfilePage() {
     }
   };
 
+  const handleSaveNotifications = async () => {
+    setError('');
+    try {
+      await updateNotificationPreferences(preferences);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : 'Unable to save notification preferences.');
+    }
+  };
+
   const handlePasswordSave = async () => {
     setError('');
 
@@ -144,7 +155,7 @@ export default function ProfilePage() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={activeTab === 'security' ? handlePasswordSave : handleSaveProfile}
+              onClick={activeTab === 'security' ? handlePasswordSave : activeTab === 'notifications' ? handleSaveNotifications : handleSaveProfile}
               className="px-5 py-2.5 bg-primary-500/10 text-primary-400 text-sm font-medium rounded-xl border border-primary-500/20 hover:bg-primary-500/20 transition-colors inline-flex items-center gap-2"
             >
               {saved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
@@ -246,11 +257,14 @@ export default function ProfilePage() {
                     onChange={(event) => setTimezone(event.target.value)}
                     className="w-full px-4 py-3 glass rounded-xl text-white bg-transparent focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
                   >
-                    <option value="America/New_York" className="bg-dark-900">New York</option>
-                    <option value="America/Chicago" className="bg-dark-900">Chicago</option>
-                    <option value="America/Denver" className="bg-dark-900">Denver</option>
-                    <option value="America/Los_Angeles" className="bg-dark-900">Los Angeles</option>
-                    <option value="Europe/London" className="bg-dark-900">London</option>
+                    <option value="Africa/Dar_es_Salaam" className="bg-dark-900">Dar es Salaam (EAT)</option>
+                    <option value="Africa/Nairobi" className="bg-dark-900">Nairobi (EAT)</option>
+                    <option value="Africa/Kampala" className="bg-dark-900">Kampala (EAT)</option>
+                    <option value="America/New_York" className="bg-dark-900">New York (EST)</option>
+                    <option value="America/Chicago" className="bg-dark-900">Chicago (CST)</option>
+                    <option value="America/Denver" className="bg-dark-900">Denver (MST)</option>
+                    <option value="America/Los_Angeles" className="bg-dark-900">Los Angeles (PST)</option>
+                    <option value="Europe/London" className="bg-dark-900">London (GMT)</option>
                   </select>
                 </div>
               </div>

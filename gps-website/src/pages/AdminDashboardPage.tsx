@@ -29,10 +29,10 @@ export default function AdminDashboardPage() {
 
   const sidebarItems = [
     { icon: LayoutDashboard, label: 'Overview', active: true, path: '/admin/dashboard' },
-    { icon: Users, label: 'Users', path: recentUsers[0] ? `/admin/users/${recentUsers[0].id}` : '/admin/dashboard' },
+    { icon: Users, label: 'Users', path: '/admin/users' },
     { icon: CreditCard, label: 'Billing', path: '/admin/billing' },
     { icon: BarChart3, label: 'Audit Log', path: '/admin/audit-log' },
-    { icon: Globe, label: 'Devices', path: '/admin/dashboard' },
+    { icon: Globe, label: 'Devices', path: '/admin/devices' },
     { icon: Server, label: 'System', path: '/admin/dashboard' },
     { icon: Settings, label: 'Settings', path: '/admin/dashboard' },
   ];

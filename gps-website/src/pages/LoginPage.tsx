@@ -9,6 +9,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { login, isAuthenticated, isLoading: isAuthLoading } = useAuth();
@@ -24,7 +25,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(email, password, rememberMe);
       navigate('/dashboard');
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : 'Unable to sign in.');
@@ -148,7 +149,12 @@ export default function LoginPage() {
 
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 rounded border-gray-600 bg-dark-800 text-primary-500 focus:ring-primary-500/50" />
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-600 bg-dark-800 text-primary-500 focus:ring-primary-500/50"
+                />
                 <span className="text-sm text-gray-400">Remember me</span>
               </label>
               <Link to="/forgot-password" className="text-sm text-primary-400 hover:text-primary-300 transition-colors">

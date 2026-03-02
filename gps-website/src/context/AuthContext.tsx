@@ -25,7 +25,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<User>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<User>;
   adminLogin: (email: string, password: string) => Promise<User>;
   register: (input: RegisterInput) => Promise<User>;
   logout: () => Promise<void>;
@@ -73,9 +73,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, rememberMe = true) => {
     const session = await loginRequest(email, password, 'user');
-    setStoredToken(session.token);
+    setStoredToken(session.token, rememberMe);
     setUser(session.user);
     return session.user;
   };

@@ -30,8 +30,8 @@ npm run dev
 
 ## Seed Accounts
 
-- User: `user@crestech.co.tz` / `user123`
-- Admin: `admin@crestech.co.tz` / `admin123`
+- User: `user@example.com` / `123456`
+- Admin: `admin@example.com` / `12345`
 
 The backend creates these automatically if they do not already exist.
 
